@@ -2,7 +2,7 @@
 title: Chapter 1.  Authentication and Identity Management
 description: 
 published: true
-date: 2025-11-05T15:32:29.454Z
+date: 2025-11-05T15:41:57.496Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-05T10:36:26.618Z
@@ -573,4 +573,24 @@ authority bundle.
   <p><code><strong>system:serviceaccounts:</strong><i><strong>project</strong></i></code></p>
   <p>This group includes all the SAs in the specified project.</p>
 </blockquote>
+<h4>Create a Client Certificate</h4>
+<pre><code class="language-plaintext">openssl req -nodes -newkey rsa:4096 -keyout key_filename \
+ -subj "/O=group1/O=group2/CN=username" -out csr_filename</code></pre>
 <p>&nbsp;</p>
+<pre><code class="language-plaintext">apiVersion: certificates.k8s.io/v1
+kind: CertificateSigningRequest
+metadata:
+  name: csr_name 
+spec:
+  signerName: kubernetes.io/kube-apiserver-client 
+  expirationSeconds: 604800 # one week 
+  request: $(base64 -w0 csr_filename) 
+  usages: 
+  - client auth</code></pre>
+<p>&nbsp;</p>
+<pre><code class="language-plaintext">oc apply -f csr.yaml</code></pre>
+<p>&nbsp;</p>
+<pre><code class="language-plaintext">oc adm certificate approve csr_name</code></pre>
+<p>&nbsp;</p>
+<pre><code class="language-plaintext">oc get csr csr_name -o jsonpath='{.status.certificate}' \
+  | base64 -d &gt; certificate_filename</code></pre>
