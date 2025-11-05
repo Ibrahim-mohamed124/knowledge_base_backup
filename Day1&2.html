@@ -2,11 +2,32 @@
 title: Chapter 1.  Authentication and Identity Management
 description: 
 published: true
-date: 2025-11-05T10:36:26.618Z
+date: 2025-11-05T10:47:56.739Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-05T10:36:26.618Z
 -->
 
 <h1>Chapter&nbsp;1.&nbsp; Authentication and Identity Management</h1>
-<p>&nbsp;</p>
+<ul>
+  <li>Authentication could be via <mark class="marker-yellow">certificates or tokens</mark></li>
+  <li>Kubernetes considers to be authenticated any user that presents<mark class="marker-yellow"> a valid certificate that is signed by a trusted certificate authority (CA).</mark> Kubernetes reads the <code>subject</code> field from the certificate, and assigns the username and the groups with the <code>common name</code> (CN) and the <code>organization</code> (O) fields, respectively.</li>
+  <li>If the request does not present an access token or certificate, then Kubernetes assigns to the request the <code>system:anonymous</code> system user and the <code>system:unauthenticated</code> system group.</li>
+  <li>Kubernetes uses RBAC policies to determine whether the anonymous user has appropriate access to perform the requested action.</li>
+</ul>
+<h2>Authentication in OpenShift</h2>
+<ul>
+  <li>OpenShift includes its own built-in OAuth server</li>
+</ul>
+<h3>Authentication Methods</h3>
+<ul>
+  <li>The OpenShift OAuth server handles user authentication, and it issues OAuth tokens that grant access to specific resources.</li>
+</ul>
+<ol>
+  <li><strong>X.509 client certificates</strong></li>
+  <li><strong>OAuth access tokens</strong>
+    <ul>
+      <li>OpenShift preconfigures Kubernetes to trust tokens that its own internal OAuth server issues.&nbsp;</li>
+    </ul>
+  </li>
+</ol>
