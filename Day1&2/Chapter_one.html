@@ -2,7 +2,7 @@
 title: Chapter 1.  Authentication and Identity Management
 description: 
 published: true
-date: 2025-11-05T12:54:14.817Z
+date: 2025-11-05T12:57:29.910Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-05T10:36:26.618Z
@@ -265,6 +265,37 @@ spec:
   <li>Group synchronization requires a<mark class="marker-yellow"> project </mark>where the <mark class="marker-yellow">pods </mark>run, a <mark class="marker-yellow">service account</mark> to perform the work, a<mark class="marker-yellow"> cluster role</mark> where the right permissions are defined, and<mark class="marker-yellow"> cluster role binding</mark> to associate the cluster role with the service account. When the synchronization configuration is in place, the synchronization of groups is automated by using a <mark class="marker-yellow">cron job</mark> to schedule the recurring execution of the synchronization task.</li>
 </ul>
 <h4>LDAP Sync Configuration File</h4>
+<ul>
+  <li><code>LDAPSyncConfig</code> resource that contains the <mark class="marker-yellow">client LDAP configuration</mark> details and <mark class="marker-yellow">query definition</mark> for the LDAP group entities that are needed within OpenShift.</li>
+</ul>
+<pre><code class="language-plaintext">kind: LDAPSyncConfig
+apiVersion: v1
+url: ldap://example.com:389
+insecure: false 1
+rfc2307:
+    groupsQuery:
+        baseDN: "ou=groups,dc=example,dc=com"
+        scope: sub
+        derefAliases: never
+        pageSize: 0
+    groupUIDAttribute: dn 2
+    groupNameAttributes: [ cn ] 3
+    groupMembershipAttributes: [ member ]
+    usersQuery:
+        baseDN: "ou=users,dc=example,dc=com"
+        scope: sub
+        derefAliases: never
+        pageSize: 0
+    userUIDAttribute: dn 4
+    userNameAttributes: [ mail ] 5
+    tolerateMemberNotFoundErrors: false
+    tolerateMemberOutOfScopeErrors: false
+    
+1. When true, no TLS connection is made to the server. When false, ldaps:// URLs connect by using TLS, and ldap:// URLs are upgraded to TLS. The insecure option must be set to false when ldaps:// URLs are in use, because these URLs always attempt to connect by using TLS.
+2. The field that corresponds to the unique identifier field on the LDAP server for a group.
+3. The attribute for the name of the group.
+4. The field that corresponds the unique identifier field of the LDAP server for a user.
+5.The attribute for the name of the user.</code></pre>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
