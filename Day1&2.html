@@ -2,7 +2,7 @@
 title: Chapter 1.  Authentication and Identity Management
 description: 
 published: true
-date: 2025-11-05T12:00:37.841Z
+date: 2025-11-05T12:15:53.680Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-05T10:36:26.618Z
@@ -151,7 +151,23 @@ user:
   </li>
 </ul>
 <h2>LDAP Authentication and Group Synchronization</h2>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
+<ul>
+  <li>When users enter credentials for the cluster, the OAuth server initiates a connection and a corresponding <mark class="marker-yellow">query to the LDAP server,</mark> and creates bindings when matching unique entries are found.</li>
+  <li><mark class="marker-yellow">Additional configuration within the OpenShift cluster is required to synchronize groups from the LDAP database</mark>, as well as to define the appropriate access and permissions for each group.</li>
+</ul>
+<blockquote>
+  <p>The LDAP protocol defines a query language to retrieve information from database entries of a remote LDAP server, which can contain entries for users and groups within the organization.</p>
+</blockquote>
+<ul>
+  <li>LDAP:<ul>
+      <li>LDAP URI: a string that contains a group of parameters that are essential to the query:<ul>
+          <li>ldap: The LDAP protocol designation. For LDAP over SSL, use the <code>ldaps</code> protocol. Red&nbsp;Hat recommends using StartTLS over regular <code>ldap</code>.</li>
+          <li>host:port: the hostname and the listening port of the LDAP server, The default for <code>ldap</code> is <code>localhost:389</code>, and for <code>ldaps</code> is <code>localhost:636</code>.</li>
+          <li>basedn: The DN of the directory where a query begins. This directory is used as the root location for the search.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
