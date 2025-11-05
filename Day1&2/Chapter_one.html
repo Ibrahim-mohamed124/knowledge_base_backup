@@ -2,7 +2,7 @@
 title: Chapter 1.  Authentication and Identity Management
 description: 
 published: true
-date: 2025-11-05T14:40:21.969Z
+date: 2025-11-05T14:49:54.090Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-05T10:36:26.618Z
@@ -523,5 +523,16 @@ authority bundle.
 
 6. The URL for the IdP. OpenShift accepts only HTTPS URLs.</code></pre>
 <p>&nbsp;</p>
+<blockquote>
+  <p>If your OIDC IdP supports the grant flow for resource owner password credentials (ROPC), then you can also log in through the IdP by using the <code>oc login</code> command with the username and the password.</p>
+  <p>If your OIDC IdP does not support the ROPC grant flow, then you receive a <code>You must obtain an API token</code> login error when you use the <code>oc login</code> command with the username and the password. Then, you must first get an OAuth access token and use it to log in by using the <code>oc login --token=<i>acces_token</i></code> command.</p>
+  <p>You can get the OAuth access token by logging in through the OpenShift web console and then clicking <strong>Help</strong> → <strong>Command line tools</strong> → <strong>Copy login command</strong>. You can also request the OAuth access token through the OpenShift REST API.</p>
+</blockquote>
 <p>&nbsp;</p>
+<pre><code class="language-plaintext">oc get useroauthaccesstokens  &gt; to obtain the user access tokens issued by oauth</code></pre>
+<blockquote>
+  <p>if you remove a user account from the OIDC IdP and the user is logged in to OpenShift, then the user can still perform tasks in OpenShift until they log out, because they still have a valid token that the OpenShift built-in OAuth server emits.</p>
+</blockquote>
 <p>&nbsp;</p>
+<pre><code class="language-plaintext">oc delete oauthaccesstoken $(oc get oauthaccesstoken -o \
+  jsonpath='{.items[?(@.userName=="username")].metadata.name}')</code></pre>
