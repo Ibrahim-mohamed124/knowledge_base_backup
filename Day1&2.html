@@ -2,7 +2,7 @@
 title: Chapter 1.  Authentication and Identity Management
 description: 
 published: true
-date: 2025-11-05T11:48:03.658Z
+date: 2025-11-05T11:56:15.144Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-05T10:36:26.618Z
@@ -141,7 +141,15 @@ user:
   uid: 12345678-90ab-cdef-1234-567890abcdef
 </code></pre>
 <h3>OAuth Server Mapping Methods</h3>
-<p>&nbsp;</p>
+<ul>
+  <li>After a login, openshift creates the user(from the preferred name in the idp) and identity resources and maps them.</li>
+  <li>To avoid collisions, mappingMethod parameter is essential:<ul>
+      <li>claim:<mark class="marker-yellow"> fails if a user with that username is already mapped to another identity</mark></li>
+      <li>add: If a user with that username exists in OpenShift, then it maps the identity to the existing user, <mark class="marker-yellow">and adds the new identity to any existing identity mappings for the user.</mark></li>
+      <li>lookup: OpenShift looks up an existing identity, user identity mapping, and user,<mark class="marker-yellow"> but does not automatically provision users or identities.</mark> Thus, with this method you must manually provision users. With this method, cluster administrators can set up identities and users manually, or by using an external process.</li>
+    </ul>
+  </li>
+</ul>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
