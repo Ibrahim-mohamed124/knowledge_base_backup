@@ -2,7 +2,7 @@
 title: Chapter 1.  Authentication and Identity Management
 description: 
 published: true
-date: 2025-11-05T14:35:28.116Z
+date: 2025-11-05T14:40:21.969Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-05T10:36:26.618Z
@@ -469,10 +469,59 @@ spec:
   </li>
   <li><strong>OIDC Group Claims: </strong>OpenShift uses the <code>group</code> claim to map the group membership of a user in the IdP to a group object.</li>
 </ul>
+<h4>Configuring OIDC IdP</h4>
+<ol>
+  <li>Obtain the client ID and the client secret from the OIDC IdP client for the OpenShift integration.</li>
+  <li>Create an OpenShift secret object, which contains the client secret that is obtained from the OIDC client configuration, in the <code>openshift-config</code> namespace.</li>
+  <li>Create an OpenShift configuration map object, which contains the certificate authority bundle in the <code>ca.crt</code> file parameter, in the <code>openshift-config</code> namespace (required only if the CA certificate is not configured as a system-wide CA).</li>
+  <li>Create the OAuth CR YAML file to include the OIDC IdP.</li>
+  <li>Apply the configuration file to the OAuth CR.</li>
+</ol>
 <p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
+<pre><code class="language-plaintext">apiVersion: config.openshift.io/v1
+kind: OAuth
+metadata:
+  name: cluster
+spec:
+  identityProviders:
+  - name: oidc_provider_name 1
+    mappingMethod: claim
+    type: OpenID
+    openID:
+      clientID: oidc_clientid 2
+      clientSecret: 3
+        name: secret_name
+      ca: 4
+        name: config_map_name
+      claims: 5
+        preferredUsername:
+        - preferred_username
+        - email
+        name:
+        - nickname
+        - given_name
+        - name
+        email:
+        - custom_email_claim
+        - email
+        groups:
+        - groups
+      issuer: https://external_idp_url.com 6
+      
+1. OpenShift prefixes the value of the identity claim with the provider name to form an identity 
+name, and uses the identity name to build the redirect URL.
+
+2. The client ID for the existing client in the IdP. You must enable the client to redirect to 
+https://oauth-openshift.apps.cluster_name.cluster_domain/oauth2callback/idp_provider_name.
+
+3. The name for the OpenShift secret object that contains the client secret.
+
+4. (Optional) The name for the OpenShift configuration map object that contains the certificate 
+authority bundle.
+
+5. The list of claims to use as the identity, such as the preferred username, email address, or groups.
+
+6. The URL for the IdP. OpenShift accepts only HTTPS URLs.</code></pre>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
