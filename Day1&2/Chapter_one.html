@@ -2,7 +2,7 @@
 title: Chapter 1.  Authentication and Identity Management
 description: 
 published: true
-date: 2025-11-05T14:30:21.466Z
+date: 2025-11-05T14:35:28.116Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-05T10:36:26.618Z
@@ -458,9 +458,17 @@ spec:
 </ul>
 <h4>OIDC Claims</h4>
 <ul>
-  <li>&nbsp;</li>
+  <li>OIDC claims are key/value pairs that contain information about the user in the JWT token.</li>
+  <li>openshift uses these claims to populate the user, identity, and group resources.&nbsp;</li>
+  <li>one claim must be configured to use as the user's identity. The default identity claim is <code>sub</code>, which stands for <i>subject identifier</i>.<ul>
+      <li><code><strong>sub:</strong></code>The remote identity for the user at the IdP.</li>
+      <li><code><strong>preferred_username:</strong></code>The preferred username when provisioning a user, which typically corresponds to the username in the authentication system for the user.</li>
+      <li><code><strong>email:</strong></code>Email address.</li>
+      <li><code><strong>name:</strong></code>Display name.</li>
+    </ul>
+  </li>
+  <li><strong>OIDC Group Claims: </strong>OpenShift uses the <code>group</code> claim to map the group membership of a user in the IdP to a group object.</li>
 </ul>
-<p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
