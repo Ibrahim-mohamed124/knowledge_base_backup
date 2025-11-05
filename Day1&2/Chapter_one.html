@@ -2,7 +2,7 @@
 title: Chapter 1.  Authentication and Identity Management
 description: 
 published: true
-date: 2025-11-05T15:11:09.308Z
+date: 2025-11-05T15:32:29.454Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-05T10:36:26.618Z
@@ -555,8 +555,22 @@ authority bundle.
 <ul>
   <li>Manually generate a bound SA token through the <code>TokenRequest</code> API, and use it as the bearer token for authentication to the Kubernetes API.</li>
 </ul>
-<pre><code class="language-plaintext">oc create token SA_name -n project</code></pre>
+<pre><code class="language-plaintext">oc create token SA_name -n project --duration</code></pre>
 <ul>
-  <li>&nbsp;</li>
+  <li>The default lifetime for the SA<mark class="marker-yellow"> token is one hour.</mark></li>
+  <li>OpenShift assigns an SA to every pod that you deploy. By default, OpenShift creates the following SAs for every project:<ul>
+      <li><code><strong>builder:</strong></code>OpenShift uses this SA to <mark class="marker-yellow">build pods</mark>. By default, this SA has the <code>system:image-builder</code> role, so <mark class="marker-yellow">the resource can push images to any image stream in the project by using the internal Docker registry.</mark></li>
+      <li><code><strong>deployer:</strong></code>OpenShift uses this SA in<mark class="marker-yellow"> deployment pods</mark>. By default, this SA has the <code>system:deployer</code> role, so the resource can <mark class="marker-yellow">view and modify replication controllers and pods in the project</mark>. This SA exists only for applications that use OpenShift deployment configuration resources.</li>
+      <li><code><strong>default:</strong></code>OpenShift assigns this default SA to pods if you do not specify a different SA when you create the pods.</li>
+    </ul>
+  </li>
+  <li>If you grant roles to an SA, then you must use the name of the SA together with the name of the project and the <code>system:serviceaccount</code> string</li>
 </ul>
+<blockquote>
+  <p>Whenever you create an SA, it is automatically a member of the following groups:</p>
+  <p><code><strong>system:serviceaccounts</strong></code></p>
+  <p>This group includes all the SAs in the cluster.</p>
+  <p><code><strong>system:serviceaccounts:</strong><i><strong>project</strong></i></code></p>
+  <p>This group includes all the SAs in the specified project.</p>
+</blockquote>
 <p>&nbsp;</p>
