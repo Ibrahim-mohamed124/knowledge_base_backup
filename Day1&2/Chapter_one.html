@@ -2,7 +2,7 @@
 title: Chapter 1.  Authentication and Identity Management
 description: 
 published: true
-date: 2025-11-05T14:49:54.090Z
+date: 2025-11-05T15:10:15.368Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-05T10:36:26.618Z
@@ -536,3 +536,21 @@ authority bundle.
 <p>&nbsp;</p>
 <pre><code class="language-plaintext">oc delete oauthaccesstoken $(oc get oauthaccesstoken -o \
   jsonpath='{.items[?(@.userName=="username")].metadata.name}')</code></pre>
+<p>&nbsp;</p>
+<h2>Token and Client Certificate Authentication with kubeconfig Files</h2>
+<ul>
+  <li>Kubernetes enables external clients to authenticate to the Kubernetes API by embedding either a client certificate or an authentication token into a <code>kubeconfig</code> configuration file.&nbsp;</li>
+  <li><mark class="marker-yellow">SAs are specific to a particular project and cannot be directly shared across projects.</mark></li>
+  <li>In openshift, the SA automatically contains <mark class="marker-yellow">two secrets</mark>: an API token and credentials for the OpenShift Container Registry.&nbsp;</li>
+  <li>The <mark class="marker-yellow"><strong>automatically generated API token and credentials never expire.&nbsp;</strong></mark></li>
+  <li>Revoke the token and credentials by deleting the secrets, and openshift automatically creates new secrets</li>
+</ul>
+<blockquote>
+  <p>Starting with Kubernetes 1.23, SAs do not automatically create the secrets that contain long-term credentials for accessing the Kubernetes API. Thus, you must obtain the credentials by using the <code>TokenRequest</code> API. The tokens that the <code>TokenRequest</code> API provides are more secure than the tokens that are stored in secrets, because the <code>TokenRequest</code> tokens have a bounded lifetime; other API clients cannot read the <code>TokenRequest</code> tokens; and OpenShift automatically invalidates the <code>TokenRequest</code> tokens when the pod that they are mounted into is deleted.</p>
+</blockquote>
+<ul>
+  <li>Although Red&nbsp;Hat OpenShift Container Platform (RHOCP)&nbsp;4.14 is based on Kubernetes 1.27, it still creates the SA token secrets to communicate with the Kubernetes API server, because some features and workloads need the SA secrets.&nbsp;</li>
+</ul>
+<figure class="image image_resized" style="width:100%;"><img src="/tokenapi.svg"></figure>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
