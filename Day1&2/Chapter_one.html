@@ -2,7 +2,7 @@
 title: Chapter 1.  Authentication and Identity Management
 description: 
 published: true
-date: 2025-11-05T13:05:01.179Z
+date: 2025-11-05T14:30:21.466Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-05T10:36:26.618Z
@@ -422,5 +422,49 @@ spec:
           activeDeadlineSeconds: 500
           dnsPolicy: "ClusterFirst"
           serviceAccountName: "ldap-group-sync-acct"</code></pre>
+<h2>OIDC Authentication and Group Claims</h2>
+<blockquote>
+  <p>OIDC is a set of standards for delegating the authentication of a user who accesses a protected resource. OIDC provides a way for applications to verify the identity of users and to obtain user profile information.</p>
+</blockquote>
+<ul>
+  <li>Red&nbsp;Hat provides Red&nbsp;Hat Single Sign-On (SSO) to<mark class="marker-yellow"> extend the capabilities of the OpenShift internal OAuth</mark>, and to serve as the solution for an OIDC identity infrastructure.&nbsp;</li>
+</ul>
+<h4>OIDC Tokens</h4>
+<ul>
+  <li>OIDC relies on the JavaScript Object Signing and Encryption (JOSE) set of standards. &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; JSON Web Token (JWT)</li>
+</ul>
+<blockquote>
+  <p>A JWT is composed of three parts:</p>
+  <p>Code</p>
+  <pre><code class="language-plaintext">&lt;Header&gt;.&lt;Payload&gt;.&lt;Signature&gt;</code></pre>
+  <ul>
+    <li>The header contains the type of the token and the signing algorithm.</li>
+    <li>The payload contains the user claims. User claims are attributes for the user with details about their identity, profile, privileges, and group membership. Examples of user claims are the <code>sub</code>, <code>iat</code>, <code>exp</code>, or <code>iss</code> parameters, which are the identity for the user, the issue date, the expiration date, and the token issuer, respectively.</li>
+    <li>Finally, the signature is composed of the concatenation of the encoded header, the encoded payload, and the result of applying a signing algorithm.</li>
+  </ul>
+</blockquote>
+<ul>
+  <li>An <i>identity broker:</i>
+    <ul>
+      <li>Delegates the authentication of the user to the external IdP.</li>
+      <li>the OpenShift built-in OAuth server acts as an identity broker.</li>
+    </ul>
+  </li>
+  <li>Configuration:<ol>
+      <li>Configure the OIDC client in the IdP that authenticates the user to OpenShift to obtain connection parametrs</li>
+      <li>Use the connection parameters and credentials from the OIDC client to configure the OIDC IdP in the OpenShift built-in OAuth server.&nbsp;</li>
+    </ol>
+  </li>
+</ul>
+<h4>OIDC Claims</h4>
+<ul>
+  <li>&nbsp;</li>
+</ul>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
