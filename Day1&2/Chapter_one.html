@@ -2,7 +2,7 @@
 title: Chapter 1.  Authentication and Identity Management
 description: 
 published: true
-date: 2025-11-05T15:47:13.922Z
+date: 2025-11-06T10:30:03.515Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-05T10:36:26.618Z
@@ -427,7 +427,7 @@ spec:
   <p>OIDC is a set of standards for delegating the authentication of a user who accesses a protected resource. OIDC provides a way for applications to verify the identity of users and to obtain user profile information.</p>
 </blockquote>
 <ul>
-  <li>Red&nbsp;Hat provides Red&nbsp;Hat Single Sign-On (SSO) to<mark class="marker-yellow"> extend the capabilities of the OpenShift internal OAuth</mark>, and to serve as the solution for an OIDC identity infrastructure.&nbsp;</li>
+  <li>Red&nbsp;Hat provides Red&nbsp;Hat Single Sign-On (SSO) to<mark class="marker-yellow"> extend the capabilities of the OpenShift internal OAuth</mark>, and to serve as the solution for an OIDC identity infrastructure.</li>
 </ul>
 <h4>OIDC Tokens</h4>
 <ul>
@@ -437,6 +437,7 @@ spec:
   <p>A JWT is composed of three parts:</p>
   <p>Code</p>
   <pre><code class="language-plaintext">&lt;Header&gt;.&lt;Payload&gt;.&lt;Signature&gt;</code></pre>
+  <p>&nbsp;</p>
   <ul>
     <li>The header contains the type of the token and the signing algorithm.</li>
     <li>The payload contains the user claims. User claims are attributes for the user with details about their identity, profile, privileges, and group membership. Examples of user claims are the <code>sub</code>, <code>iat</code>, <code>exp</code>, or <code>iss</code> parameters, which are the identity for the user, the issue date, the expiration date, and the token issuer, respectively.</li>
@@ -452,14 +453,14 @@ spec:
   </li>
   <li>Configuration:<ol>
       <li>Configure the OIDC client in the IdP that authenticates the user to OpenShift to obtain connection parametrs</li>
-      <li>Use the connection parameters and credentials from the OIDC client to configure the OIDC IdP in the OpenShift built-in OAuth server.&nbsp;</li>
+      <li>Use the connection parameters and credentials from the OIDC client to configure the OIDC IdP in the OpenShift built-in OAuth server.</li>
     </ol>
   </li>
 </ul>
 <h4>OIDC Claims</h4>
 <ul>
   <li>OIDC claims are key/value pairs that contain information about the user in the JWT token.</li>
-  <li>openshift uses these claims to populate the user, identity, and group resources.&nbsp;</li>
+  <li>openshift uses these claims to populate the user, identity, and group resources.</li>
   <li>one claim must be configured to use as the user's identity. The default identity claim is <code>sub</code>, which stands for <i>subject identifier</i>.<ul>
       <li><code><strong>sub:</strong></code>The remote identity for the user at the IdP.</li>
       <li><code><strong>preferred_username:</strong></code>The preferred username when provisioning a user, which typically corresponds to the username in the authentication system for the user.</li>
@@ -530,6 +531,7 @@ authority bundle.
 </blockquote>
 <p>&nbsp;</p>
 <pre><code class="language-plaintext">oc get useroauthaccesstokens  &gt; to obtain the user access tokens issued by oauth</code></pre>
+<p>&nbsp;</p>
 <blockquote>
   <p>if you remove a user account from the OIDC IdP and the user is logged in to OpenShift, then the user can still perform tasks in OpenShift until they log out, because they still have a valid token that the OpenShift built-in OAuth server emits.</p>
 </blockquote>
@@ -539,9 +541,9 @@ authority bundle.
 <p>&nbsp;</p>
 <h2>Token and Client Certificate Authentication with kubeconfig Files</h2>
 <ul>
-  <li>Kubernetes enables external clients to authenticate to the Kubernetes API by embedding either a client certificate or an authentication token into a <code>kubeconfig</code> configuration file.&nbsp;</li>
+  <li>Kubernetes enables external clients to authenticate to the Kubernetes API by embedding either a client certificate or an authentication token into a <code>kubeconfig</code> configuration file.</li>
   <li><mark class="marker-yellow">SAs are specific to a particular project and cannot be directly shared across projects.</mark></li>
-  <li>In openshift, the SA automatically contains <mark class="marker-yellow">two secrets</mark>: an API token and credentials for the OpenShift Container Registry.&nbsp;</li>
+  <li>In openshift, the SA automatically contains <mark class="marker-yellow">two secrets</mark>: an API token and credentials for the OpenShift Container Registry.</li>
   <li>The <mark class="marker-yellow"><strong>automatically generated API token and credentials never expire.&nbsp;</strong></mark></li>
   <li>Revoke the token and credentials by deleting the secrets, and openshift automatically creates new secrets</li>
 </ul>
@@ -549,13 +551,14 @@ authority bundle.
   <p>Starting with Kubernetes 1.23, SAs do not automatically create the secrets that contain long-term credentials for accessing the Kubernetes API. Thus, you must obtain the credentials by using the <code>TokenRequest</code> API. The tokens that the <code>TokenRequest</code> API provides are more secure than the tokens that are stored in secrets, because the <code>TokenRequest</code> tokens have a bounded lifetime; other API clients cannot read the <code>TokenRequest</code> tokens; and OpenShift automatically invalidates the <code>TokenRequest</code> tokens when the pod that they are mounted into is deleted.</p>
 </blockquote>
 <ul>
-  <li>Although Red&nbsp;Hat OpenShift Container Platform (RHOCP)&nbsp;4.14 is based on Kubernetes 1.27, it still creates the SA token secrets to communicate with the Kubernetes API server, because some features and workloads need the SA secrets.&nbsp;</li>
+  <li>Although Red&nbsp;Hat OpenShift Container Platform (RHOCP)&nbsp;4.14 is based on Kubernetes 1.27, it still creates the SA token secrets to communicate with the Kubernetes API server, because some features and workloads need the SA secrets.</li>
 </ul>
 <figure class="image image_resized" style="width:100%;"><img src="/tokenapi.svg"></figure>
 <ul>
   <li>Manually generate a bound SA token through the <code>TokenRequest</code> API, and use it as the bearer token for authentication to the Kubernetes API.</li>
 </ul>
 <pre><code class="language-plaintext">oc create token SA_name -n project --duration</code></pre>
+<p>&nbsp;</p>
 <ul>
   <li>The default lifetime for the SA<mark class="marker-yellow"> token is one hour.</mark></li>
   <li>OpenShift assigns an SA to every pod that you deploy. By default, OpenShift creates the following SAs for every project:<ul>
@@ -610,6 +613,7 @@ spec:
   --as-group group_to_impersonate
   
  oc auth can-i --list</code></pre>
+<p>&nbsp;</p>
 <ul>
   <li>Regular User That Impersonates Another User<ul>
       <li>create a custom role with the appropriate permissions, and then create a role binding to assign the role to the user.</li>
@@ -627,3 +631,27 @@ rules:
   resourceNames: ["admin"]</code></pre>
 <p>&nbsp;</p>
 <pre><code class="language-plaintext"> oc get nodes --as admin</code></pre>
+<p>&nbsp;</p>
+<h3>oc config command</h3>
+<blockquote>
+  <p>Available Commands:</p>
+  <p>&nbsp;current-context &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Display the current-context</p>
+  <p>&nbsp;delete-cluster &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Delete the specified cluster from the kubeconfig</p>
+  <p>&nbsp;delete-context &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Delete the specified context from the kubeconfig</p>
+  <p>&nbsp;delete-user &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Delete the specified user from the kubeconfig</p>
+  <p>&nbsp;get-clusters &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Display clusters defined in the kubeconfig</p>
+  <p>&nbsp;get-contexts &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Describe one or many contexts</p>
+  <p>&nbsp;get-users &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Display users defined in the kubeconfig</p>
+  <p>&nbsp;new-admin-kubeconfig &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Generate, make the server trust, and display a new admin.kubeconfig.</p>
+  <p>&nbsp;new-kubelet-bootstrap-kubeconfig &nbsp; Generate, make the server trust, and display a new kubelet</p>
+  <p>/etc/kubernetes/kubeconfig.</p>
+  <p>&nbsp;refresh-ca-bundle &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Update the OpenShift CA bundle by contacting the apiserver.</p>
+  <p>&nbsp;rename-context &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Rename a context from the kubeconfig file</p>
+  <p>&nbsp;set &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Set an individual value in a kubeconfig file</p>
+  <p>&nbsp;set-cluster &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Set a cluster entry in kubeconfig</p>
+  <p>&nbsp;set-context &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Set a context entry in kubeconfig</p>
+  <p>&nbsp;set-credentials &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Set a user entry in kubeconfig</p>
+  <p>&nbsp;unset &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Unset an individual value in a kubeconfig file</p>
+  <p>&nbsp;use-context &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Set the current-context in a kubeconfig file</p>
+  <p>&nbsp;view &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Display merged kubeconfig settings or a specified kubeconfig file</p>
+</blockquote>
