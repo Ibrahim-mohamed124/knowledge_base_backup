@@ -2,7 +2,7 @@
 title: Backup, Restore, and Migration.
 description: 
 published: true
-date: 2025-11-07T15:33:12.961Z
+date: 2025-11-07T15:36:22.468Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-07T08:07:57.224Z
@@ -977,5 +977,49 @@ The restore progress, with the number of restored items so far and the total ite
 5. 
 Restore start time.</code></pre>
 <p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
+<blockquote>
+  <p>The possible statuses of the restore are the same as for the backup resource. A successful restore goes through the following statuses during its lifetime:</p>
+  <p><code>New</code></p>
+  <p><code>InProgress</code></p>
+  <p><code>WaitingForPluginOperations</code></p>
+  <p><code>Completed</code></p>
+</blockquote>
+<ul>
+  <li>During the restore, OADP adds two labels to the imported resources: A <code>velero.io/restore-name</code> label with the restore name, and a <code>velero.io/backup-name</code> with the backup name that the resource came from.&nbsp;</li>
+  <li>OADP stores in the object storage detailed information about each backup and restore attempt, such as logs, the list of resources that are backed up or restored, and a summary of the errors or warnings that occur during the backup and restore process.&nbsp;</li>
+</ul>
+<pre><code class="language-plaintext">s3
+├── docker 1
+│   └── registry
+│       └── v2
+│           ├── blobs
+│           └── repositories
+│               └── website
+│                   └── hugo
+└── oadp
+    ├── backups 2
+    │   └── website
+    │       ├── website-logs.gz
+    │       ├── website-results.gz
+    │       └── website.tar.gz
+    └── restores 3
+        └── website-stage
+            ├── restore-website-stage-logs.gz
+            └── restore-website-stage-results.gz
+1. 
+The /docker/registry/v2 path contains a Docker registry with the container images that are 
+included in all backups.
+
+2. 
+The /oadp/backups path contains all the information about each backup, including the backed-up 
+
+Kubernetes resources and the backup logs. Each subdirectory is unique to a single backup attempt 
+
+and relates to the matching backup resource in the cluster.
+
+3. 
+The /oadp/restores path contains all the information about each restore, including the restore 
+
+logs. Each subdirectory is unique to a single restore attempt and relates to the matching restore 
+
+resource in the cluster.</code></pre>
