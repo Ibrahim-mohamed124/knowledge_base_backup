@@ -2,7 +2,7 @@
 title: Backup, Restore, and Migration.
 description: 
 published: true
-date: 2025-11-07T08:53:20.916Z
+date: 2025-11-07T09:32:14.530Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-07T08:07:57.224Z
@@ -82,6 +82,7 @@ dateCreated: 2025-11-07T08:07:57.224Z
 images from outside the cluster
 
 2. Destination registry URL with image and tag information</code></pre>
+<p>&nbsp;</p>
 <blockquote>
   <p>Skopeo can copy images to other locations such as a local directory or a <code>.tar</code> archive.</p>
 </blockquote>
@@ -142,6 +143,7 @@ spec:
 2. Volume mount definition for the backup location.
 
 3. Volume definition for the backup persistent volume claims (PVC).</code></pre>
+<p>&nbsp;</p>
 <ul>
   <li>You need the <code>system:image-puller</code> role on the OpenShift project to pull images from any image streams in that project. Project users and administrators already have this permission, as well as the <code>default</code> service account.</li>
 </ul>
@@ -163,6 +165,7 @@ podman tag \
   ${REGISTRY}/newproject/myapp:1.2.3
   
 podman push ${REGISTRY}/newproject/myapp:1.2.3</code></pre>
+<p>&nbsp;</p>
 <blockquote>
   <p>You need the <code>system:image-pusher</code> role on the OpenShift project to push images to any image streams in that project. Project users and administrators already have this permission, as well as the <code>builder</code> service account.</p>
 </blockquote>
@@ -244,17 +247,175 @@ driver: hostpath.csi.k8s.io
 deletionPolicy: Delete
 parameters:</code></pre>
 <p>&nbsp;</p>
+<ul>
+  <li><strong>VolumeSnapshot:</strong></li>
+</ul>
+<pre><code class="language-plaintext">oc get volumesnapshot
+
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshot
+metadata:
+  name: my-snapshot 1
+  namespace: application 2
+spec:
+  volumeSnapshotClassName: ocs-storagecluster-rbdplugin-snapclass 3
+  source:
+    persistentVolumeClaimName: application-data 4
+    
+1. Name of the volume snapshot.
+
+2. Namespace of the volume snapshot. It must be the same as the source PVC.
+
+3. Snapshot class name for the volume snapshot.
+
+4. Name of the source PVC that is used for the snapshot.</code></pre>
+<blockquote>
+  <p>When creating an application-consistent backup, the application must be quiesced or scaled down before the snapshot creation. The application can safely be resumed or scaled up after the snapshot is created and ready to use.</p>
+</blockquote>
+<ul>
+  <li><strong>VolumeSnapshotContent:</strong>
+    <ul>
+      <li>a <code>VolumeSnapshotContent</code> resource represents a snapshot that a <code>VolumeSnapshot</code> resource created.</li>
+      <li>After the snapshot is created, it can function as a source to create a PVC and for a pod to use it.</li>
+    </ul>
+  </li>
+</ul>
+<pre><code class="language-plaintext">apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: my-snapshot-volume 1
+  namespace: application 2
+spec:
+  storageClassName: ocs-external-storagecluster-ceph-rbd 3
+  accessModes:
+  - ReadWriteOnce
+  dataSource:
+    apiGroup: snapshot.storage.k8s.io
+    kind: VolumeSnapshot
+    name: my-snapshot 4
+  resources:
+    requests:
+      storage: 1Gi 5
+      
+1. Name of the PVC.
+
+2. Namespace of the PVC. It must be the same as the snapshot namespace.
+
+3. Storage class name for the PVC.
+
+4. Name of the snapshot.
+
+5. Size of the new volume. Must be equal to or greater than the snapshot size.
+
+</code></pre>
+<h4>Export Application Data</h4>
+<pre><code class="language-plaintext">apiVersion: batch/v1
+kind: Job
+metadata:
+  name: backup
+  namespace: application
+  labels:
+    app: backup
+spec:
+  backoffLimit: 1
+  template:
+    metadata:
+      labels:
+        app: backup
+    spec:
+      containers:
+      - name: backup
+        image: docker.io/d3fk/s3cmd:latest
+        command: ["/bin/sh", "-c"]
+        args:
+        - | 1
+          tar czf -C /snapshot /tmp/mybackup.tar.gz .
+          s3cmd cp /tmp/mybackup.tar.gz s3://backup/
+        volumeMounts: 2
+          - mountPath: /snapshot
+            name: snapshot
+      ...output omitted...
+      volumes: 3
+      - name: snapshot
+        persistentVolumeClaim:
+          claimName: my-snapshot-volume
+1. Archive the snapshot content and copy the archive to a remote S3 bucket.
+
+2. 
+Volume mount definition for the snapshot data in the container.
+
+3. 
+Volume definition for the snapshot PVC.</code></pre>
+<ul>
+  <li>To export the snapshot content locally from a pod by using the <code>oc cp</code> command.&nbsp;</li>
+</ul>
+<pre><code class="language-plaintext">apiVersion: v1
+kind: Pod
+metadata:
+  name: export
+spec:
+  containers:
+  - image: registry.access.redhat.com/ubi9:latest
+    command: ["/bin/bash", "-c"]
+    args:
+    - sleep infinity 1
+    ...output omitted...
+    volumeMounts: 2
+      - mountPath: /snapshot
+        name: snapshot
+  volumes: 3
+  - name: snapshot
+    persistentVolumeClaim:
+      claimName: my-snapshot-volume
+1. The sleep infinity command ensures that the pod stays alive during the manual export.
+
+2. 
+Volume mount definition for the snapshot data in the container.
+
+3. 
+Volume definition for the snapshot PVC.</code></pre>
 <p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
+<pre><code class="language-plaintext"> oc cp export:/snapshot /tmp/backup</code></pre>
+<blockquote>
+  <p>The <code>tar</code> binary must be installed in the remote container for the <code>oc cp</code> command to work.</p>
+</blockquote>
+<h4>Import Application Data</h4>
+<pre><code class="language-plaintext">apiVersion: batch/v1
+kind: Job
+metadata:
+  name: restore
+  namespace: application
+  labels:
+    app: restore
+spec:
+  backoffLimit: 1
+  template:
+    metadata:
+      labels:
+        app: restore
+    spec:
+      containers:
+      - name: restore
+        image: docker.io/d3fk/s3cmd:latest
+        command: ["/bin/bash", "-c"]
+        args: 1
+        - |
+          s3cmd cp s3://backup/mybackup.tar.gz /tmp/
+          tar xvzf /tmp/mybackup.tar.gz -C /data
+        volumeMounts: 2
+          - mountPath: /data
+            name: application-data
+      ...output omitted...
+      volumes: 3
+      - name: application-data
+        persistentVolumeClaim:
+          claimName: application-data
+1. 
+Install the s3cmd tool, fetch the backup from the S3 bucket, and extract the archive inside the application data volume.
+2. Volume mount definition for the application data in the container.
+
+3. 
+Volume definition for the application PVC.</code></pre>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
