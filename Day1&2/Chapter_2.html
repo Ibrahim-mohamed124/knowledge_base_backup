@@ -2,7 +2,7 @@
 title: Backup, Restore, and Migration.
 description: 
 published: true
-date: 2025-11-07T17:55:18.082Z
+date: 2025-11-07T18:01:34.172Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-07T08:07:57.224Z
@@ -1182,9 +1182,61 @@ The post backup hook executes the db.fsyncUnlock() MongoDB command to unlock the
 
 after the backup is completed.</code></pre>
 <p>&nbsp;</p>
+<pre><code class="language-plaintext">apiVersion: velero.io/v1
+kind: Restore
+metadata:
+  name: mongodb
+  namespace: openshift-adp
+spec:
+  backupName: mongodb
+  hooks:
+    resources:
+    - name: mongodb-unlock
+      labelSelector:
+        matchLabels:
+          app: mongodb
+      postHooks:
+      - init: 1
+          initContainers:
+          - name: remove-lock
+            image: mongodb/mongodb-community-server:7.0-ubi8
+            volumeMounts:
+            - name: mongodb-data
+              mountPath: /data/db
+            command:
+            - /usr/bin/rm
+            - /data/db/mongod.lock
+1. The init restore hook removes the database lock from the backup before the database starts.
+
+</code></pre>
 <p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
+<ul>
+  <li>OADP Data Mover stores the volume backup in the object storage inside a Kopia unified repository.<ul>
+      <li>Kopia encrypts, deduplicates, and compresses the data in the backup repository.</li>
+      <li>OADP uses a dedicated backup repository for each namespace to store all volume backups for that namespace.</li>
+      <li>OADP uses this unified repository to store backups from both volume snapshots and file-system backups.</li>
+      <li>When the first backup of a namespace is created, OADP<mark class="marker-yellow"> initializes a Kopia repository in the object storage</mark>, and creates a matching <code>BackupRepository</code> resource in the <code>openshift-adp</code> namespace.</li>
+    </ul>
+  </li>
+</ul>
+<pre><code class="language-plaintext">s3
+└── oadp
+    ├── backups
+    │   └── mongodb
+    │       ├── mongodb-logs.gz
+    │       └── ...
+    ├── kopia 1
+    │   └── mongodb
+    │       ├── kopia.repository
+    │       └── ...
+    └── restores
+        └── mongodb
+            ├── restore-mongodb-logs.gz
+            └── ...
+1.
+The /oadp/kopia path contains the backup repositories with data from volume backups. Each 
+subdirectory is a unique Kopia repository for a single namespace in the cluster and contains 
+all backups from all volumes in that namespace.</code></pre>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
