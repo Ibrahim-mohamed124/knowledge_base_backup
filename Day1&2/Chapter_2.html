@@ -2,7 +2,7 @@
 title: Backup, Restore, and Migration.
 description: 
 published: true
-date: 2025-11-07T14:59:46.164Z
+date: 2025-11-07T15:11:25.175Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-07T08:07:57.224Z
@@ -701,14 +701,113 @@ aws_secret_access_key=AWS_SECRET_ACCESS_KEY</code></pre>
 <p>&nbsp;</p>
 <h2>Backup and Restore with OADP</h2>
 <ul>
-  <li>&nbsp;</li>
+  <li>Backup and restore are initiated by creating the corresponding Kubernetes resources in the <code>openshift-adp</code> namespace.&nbsp;</li>
+  <li>Administrative access to the <code>openshift-adp</code> namespace, or to the <code>cluster-admin</code> role, is required to create those resources.</li>
+  <li><strong>Backup: </strong>This resource defines the namespaces and resources to include in the backup, and can also include a list of commands to run before or after the backup.<ul>
+      <li>The<mark class="marker-yellow"> backup resource definition </mark>and the backup information, such as <mark class="marker-yellow">backup logs and the list of included backup resources</mark>, are<mark class="marker-yellow"> stored in the object storage with the backup.</mark></li>
+      <li>OADP <mark class="marker-yellow">synchronizes backup definitions between the object storage and the OpenShift cluster to enable restoring backups to a different cluster with the same backup storage location.</mark></li>
+      <li>If a backup resource exists in the OpenShift cluster but is deleted from the object storage, then <mark class="marker-yellow">OADP deletes the Kubernetes resource.</mark></li>
+      <li>if a backup exists in the object storage, but not in OpenShift, then OADP<mark class="marker-yellow"> creates the matching backup resource in the cluster.</mark></li>
+    </ul>
+  </li>
+</ul>
+<blockquote>
+  <p>Only backups with a <code>Completed</code> state are synchronized. The object storage synchronization does not automatically create or remove backup resources with a <code>Failed</code> or <code>PartiallyFailed</code> state.</p>
+</blockquote>
+<ul>
+  <li><strong>Restore: </strong>The <code>restore</code> resource starts restoring an existing backup resource. The restore result, the list of restored resources, and the restore logs are stored in the object storage.</li>
+  <li><strong>Schedule: </strong>The <code>schedule</code> resource starts a backup on a given schedule that is written in Cron format.<ul>
+      <li>A schedule defines a backup template to create a backup resource at a recurring interval.</li>
+    </ul>
+  </li>
 </ul>
 <p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
+<figure class="image image_resized" style="width:100%;"><img src="/oadp_backup_snapshot.svg"></figure>
+<figure class="table">
+  <table style="background-color:rgb(255, 255, 255);">
+    <tbody>
+      <tr>
+        <td style="padding:0px;vertical-align:top;">
+          <figure class="image image_resized" style="width:22px;"><img src="https://rol.redhat.com/rol/static/roc/Common_Content/images/1.svg" alt="1"></figure>
+        </td>
+        <td style="padding:0px;vertical-align:top;">The administrator creates a backup resource in the <code>openshift-adp</code> namespace, which triggers the backup process.</td>
+      </tr>
+      <tr>
+        <td style="padding:0px;vertical-align:top;">
+          <figure class="image image_resized" style="width:22px;"><img src="https://rol.redhat.com/rol/static/roc/Common_Content/images/2.svg" alt="2"></figure>
+        </td>
+        <td style="padding:0px;vertical-align:top;">Velero exports all Kubernetes resources from the application namespace to the backup storage location.</td>
+      </tr>
+      <tr>
+        <td style="padding:0px;vertical-align:top;">
+          <figure class="image image_resized" style="width:22px;"><img src="https://rol.redhat.com/rol/static/roc/Common_Content/images/3.svg" alt="3"></figure>
+        </td>
+        <td style="padding:0px;vertical-align:top;">The Velero CSI plug-in creates a CSI snapshot of the application volume.</td>
+      </tr>
+      <tr>
+        <td style="padding:0px;vertical-align:top;">
+          <figure class="image image_resized" style="width:22px;"><img src="https://rol.redhat.com/rol/static/roc/Common_Content/images/4.svg" alt="4"></figure>
+        </td>
+        <td style="padding:0px;vertical-align:top;">Data Mover clones the <code>volumeSnapshotContent</code> and <code>volumeSnapshot</code> resources to the <code>openshift-adp</code> namespace.</td>
+      </tr>
+      <tr>
+        <td style="padding:0px;vertical-align:top;">
+          <figure class="image image_resized" style="width:22px;"><img src="https://rol.redhat.com/rol/static/roc/Common_Content/images/5.svg" alt="5"></figure>
+        </td>
+        <td style="padding:0px;vertical-align:top;">Data Mover creates a PVC from the volume snapshot.</td>
+      </tr>
+      <tr>
+        <td style="padding:0px;vertical-align:top;">
+          <figure class="image image_resized" style="width:22px;"><img src="https://rol.redhat.com/rol/static/roc/Common_Content/images/6.svg" alt="6"></figure>
+        </td>
+        <td style="padding:0px;vertical-align:top;">Data Mover uses Kopia to transfer the volume data to the backup storage location.</td>
+      </tr>
+      <tr>
+        <td style="padding:0px;vertical-align:top;">
+          <figure class="image image_resized" style="width:22px;"><img src="https://rol.redhat.com/rol/static/roc/Common_Content/images/7.svg" alt="7"></figure>
+        </td>
+        <td style="padding:0px;vertical-align:top;">After the backup completes, Data Mover deletes all volume snapshots and the PVCs that were created during the backup process.</td>
+      </tr>
+    </tbody>
+  </table>
+</figure>
+<figure class="image image_resized" style="width:100%;"><img src="/oadp_restore_snapshot.svg"></figure>
+<figure class="table">
+  <table style="background-color:rgb(255, 255, 255);">
+    <tbody>
+      <tr>
+        <td style="padding:0px;vertical-align:top;">
+          <figure class="image image_resized" style="width:22px;"><img src="https://rol.redhat.com/rol/static/roc/Common_Content/images/1.svg" alt="1"></figure>
+        </td>
+        <td style="padding:0px;vertical-align:top;">The administrator creates a restore resource in the <code>openshift-adp</code> namespace, which triggers the restore process.</td>
+      </tr>
+      <tr>
+        <td style="padding:0px;vertical-align:top;">
+          <figure class="image image_resized" style="width:22px;"><img src="https://rol.redhat.com/rol/static/roc/Common_Content/images/2.svg" alt="2"></figure>
+        </td>
+        <td style="padding:0px;vertical-align:top;">Velero imports the Kubernetes resources from the backup storage location to the application namespace.</td>
+      </tr>
+      <tr>
+        <td style="padding:0px;vertical-align:top;">
+          <figure class="image image_resized" style="width:22px;"><img src="https://rol.redhat.com/rol/static/roc/Common_Content/images/3.svg" alt="3"></figure>
+        </td>
+        <td style="padding:0px;vertical-align:top;">Data Mover creates a temporary PVC in the <code>openshift-adp</code> namespace, and transfers the application data from the backup storage location to the new volume.</td>
+      </tr>
+      <tr>
+        <td style="padding:0px;vertical-align:top;">
+          <figure class="image image_resized" style="width:22px;"><img src="https://rol.redhat.com/rol/static/roc/Common_Content/images/4.svg" alt="4"></figure>
+        </td>
+        <td style="padding:0px;vertical-align:top;">Velero creates the PVC in the application namespace with the same PV as the one that Data Mover is restoring. The PVC stays in the pending state until Data Mover completes the restore.</td>
+      </tr>
+      <tr>
+        <td style="padding:0px;vertical-align:top;">
+          <figure class="image image_resized" style="width:22px;"><img src="https://rol.redhat.com/rol/static/roc/Common_Content/images/5.svg" alt="5"></figure>
+        </td>
+        <td style="padding:0px;vertical-align:top;">After the transfer is complete, Data Mover releases the PV from the temporary PVC in the <code>openshift-adp</code> namespace, and binds that PV to the final PVC in the application namespace.</td>
+      </tr>
+    </tbody>
+  </table>
+</figure>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
