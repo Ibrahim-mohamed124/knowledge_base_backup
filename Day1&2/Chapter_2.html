@@ -2,7 +2,7 @@
 title: Backup, Restore, and Migration.
 description: 
 published: true
-date: 2025-11-07T08:29:23.355Z
+date: 2025-11-07T08:53:20.916Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-07T08:07:57.224Z
@@ -167,5 +167,106 @@ podman push ${REGISTRY}/newproject/myapp:1.2.3</code></pre>
   <p>You need the <code>system:image-pusher</code> role on the OpenShift project to push images to any image streams in that project. Project users and administrators already have this permission, as well as the <code>builder</code> service account.</p>
 </blockquote>
 <h3>Backing Up Application Data</h3>
+<ul>
+  <li>Different consistency levels can be achieved depending on the backup method.<ul>
+      <li><strong>Inconsistent backup</strong>
+        <ul>
+          <li>A backup is called inconsistent when the<mark class="marker-yellow"> application alters data during the backup process</mark>. Traditional data copying when the application is running creates inconsistent backups.</li>
+        </ul>
+      </li>
+      <li><strong>Crash-consistent backup</strong>
+        <ul>
+          <li>A crash-consistent backup is created by suspending disk I/O during the backup, either by using snapshot technology or specialized tools, to ensure data consistency on disk. <mark class="marker-yellow">Application data in memory or pending I/O operations are not captured.</mark> The state of the application is kept as if the application was suddenly shut down due to power loss, or crashed.</li>
+        </ul>
+      </li>
+      <li><strong>Application-consistent backup</strong>
+        <ul>
+          <li>Application-consistent backup is the most reliable type of backup because it <mark class="marker-yellow">ensures that all in-memory data and pending I/O operations are written on disk before creating the backup</mark>.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Some applications provide a set of tools to flush memory data to disk and to pause file system operations on demand. These tools provide an application-consistent backup without any downtime by using snapshots, and is also known as<mark class="marker-yellow"> </mark><i><mark class="marker-yellow">hot backup</mark></i><mark class="marker-yellow">.</mark></li>
+  <li>A more universal way to create application-consistent backup is to stop the application, copy the data to another location, and then restart the application. This method is also called<mark class="marker-yellow"> </mark><i><mark class="marker-yellow">cold backup</mark></i><mark class="marker-yellow">,</mark> because the application is down during the operation.</li>
+  <li>These pervious methods can halt the application for long time, so a better approach is to use volume snapshots. CSI takes a snapshot of certain volume and the backup can be created from the cloned volume without any effect on the application performance.</li>
+</ul>
+<h4>Volume Snapshot</h4>
+<ul>
+  <li>Container Storage Interface (CSI) drivers that support volume snapshots:</li>
+</ul>
+<figure class="table">
+  <table style="background-color:rgb(255, 255, 255);">
+    <thead>
+      <tr>
+        <th style="padding:5px;vertical-align:top;"><strong>Storage provider</strong></th>
+        <th style="padding:5px;vertical-align:top;"><strong>CSI driver</strong></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="padding:5px;vertical-align:top;">AWS Elastic Block Storage</td>
+        <td style="padding:5px;vertical-align:top;"><code>efs.csi.aws.com</code></td>
+      </tr>
+      <tr>
+        <td style="padding:5px;vertical-align:top;">Azure Disk</td>
+        <td style="padding:5px;vertical-align:top;"><code>disk.csi.azure.com</code></td>
+      </tr>
+      <tr>
+        <td style="padding:5px;vertical-align:top;">CephFS</td>
+        <td style="padding:5px;vertical-align:top;"><code>cephfs.csi.ceph.com</code></td>
+      </tr>
+      <tr>
+        <td style="padding:5px;vertical-align:top;">Ceph RBD</td>
+        <td style="padding:5px;vertical-align:top;"><code>rbd.csi.ceph.com</code></td>
+      </tr>
+      <tr>
+        <td style="padding:5px;vertical-align:top;">NetApp</td>
+        <td style="padding:5px;vertical-align:top;"><code>csi.trident.netapp.i</code></td>
+      </tr>
+    </tbody>
+  </table>
+</figure>
+<ul>
+  <li><strong>VolumeSnapshotClass:</strong>
+    <ul>
+      <li>a volume snapshot class describes the CSI driver and associated settings to create a volume snapshot.</li>
+      <li>The <code>VolumeSnapshotClass</code> driver must match the <code>StorageClass</code> provisioner of the source PVC.</li>
+    </ul>
+  </li>
+</ul>
+<pre><code class="language-plaintext">oc get volumesnapshotclasses
+
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshotClass
+metadata:
+  name: csi-hostpath-snapclass
+driver: hostpath.csi.k8s.io
+deletionPolicy: Delete
+parameters:</code></pre>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
