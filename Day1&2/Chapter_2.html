@@ -2,7 +2,7 @@
 title: Backup, Restore, and Migration.
 description: 
 published: true
-date: 2025-11-07T08:07:57.224Z
+date: 2025-11-07T08:20:34.952Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-07T08:07:57.224Z
@@ -23,7 +23,7 @@ dateCreated: 2025-11-07T08:07:57.224Z
       <li>Listing all the application resources</li>
       <li>Exporting the application resources</li>
       <li>Cleaning the application resources</li>
-      <li>Deploying the cleaned resources&nbsp;</li>
+      <li>Deploying the cleaned resources</li>
     </ul>
   </li>
 </ul>
@@ -39,6 +39,7 @@ dateCreated: 2025-11-07T08:07:57.224Z
   configs.imageregistry.operator.openshift.io/cluster \
   --patch '{"spec":{"defaultRoute":true}}' \
   --type merge</code></pre>
+<p>&nbsp;</p>
 <blockquote>
   <p>The modification to the image registry operator triggers a redeployment of the OpenShift API server. It can take up to 10 minutes for the cluster to stabilize.</p>
 </blockquote>
@@ -46,10 +47,12 @@ dateCreated: 2025-11-07T08:07:57.224Z
   <li>The operator creates a <code>default-route</code> route to expose externally the registry that uses the following URL format:</li>
 </ul>
 <pre><code class="language-plaintext">default-route-openshift-image-registry.apps-domain</code></pre>
+<p>&nbsp;</p>
 <pre><code class="language-plaintext"> REGISTRY=$(oc get \
   route default-route \
   -n openshift-image-registry \
   --template '{{.spec.host}}')</code></pre>
+<p>&nbsp;</p>
 <ul>
   <li>OpenShift users who do not have access to the <code>openshift-image-registry</code> namespace can retrieve the registry URL from any image stream:</li>
 </ul>
@@ -64,18 +67,84 @@ dateCreated: 2025-11-07T08:07:57.224Z
   -p $(oc whoami -t) \
   --tls-verify=false \
   $REGISTRY</code></pre>
+<p>&nbsp;</p>
 <ul>
   <li>The <code>oc registry login</code> command automatically uses your authentication token and the internal registry URL from the OpenShift cluster.</li>
   <li>The <code>oc</code> command stores the credentials in the <code>${HOME}/.docker/config.json</code> file in Base64 format. The Podman, Skopeo, and Docker clients can use the authentication details from that file to access an image registry.</li>
 </ul>
 <pre><code class="language-plaintext">oc registry login</code></pre>
+<h4>Export Container Images</h4>
+<pre><code class="language-plaintext">skopeo copy \
+  docker://${REGISTRY}/project_name/imagestream:tag \ 1
+  docker://remote-registry.example.com/path/to/image:remotetag 2
+  
+1. Fully qualified source image in the OpenShift internal registry &gt;&gt; exposed externally to export
+images from outside the cluster
+
+2. Destination registry URL with image and tag information</code></pre>
+<blockquote>
+  <p>Skopeo can copy images to other locations such as a local directory or a <code>.tar</code> archive.</p>
+</blockquote>
+<p>or</p>
+<pre><code class="language-plaintext">podman pull ${REGISTRY}/project_name/imagestream:tag
+
+podman save ${REGISTRY}/project_name/imagestream:tag \
+  | bzip2 &gt; image_backup.tar.bz2</code></pre>
+<p>or</p>
+<pre><code class="language-plaintext">oc image mirror ${REGISTRY}/project_name/imagestream:* \ 1
+  remote-registry.example.com/path/to/image
+  
+1. You can use the wildcard character (*) to copy all the tags to the destination registry.
+
+</code></pre>
 <p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
+<ul>
+  <li>To export a container image from within the cluster, you can use any available container tools in a pod to copy the image to the location of your choice, such as a persistent volume on NFS storage, S3 storage, or a remote registry.</li>
+</ul>
+<pre><code class="language-plaintext">apiVersion: batch/v1
+kind: Job
+metadata:
+  name: backup-image
+  namespace: application
+  labels:
+    app: backup
+spec:
+  backoffLimit: 1
+  template:
+    metadata:
+      labels:
+        app: backup
+    spec:
+      containers:
+      - name: backup
+        image: image-registry.openshift-image-registry.svc:5000/openshift/cli:latest
+        env:
+        - name: REGISTRY_AUTH_FILE
+          value: /tmp/dockercfg.json
+        command: ["/bin/bash", "-c"]
+        args:
+        - | 1
+          oc registry login
+          oc image mirror \
+            image-registry.openshift-image-registry.svc:5000/application/myapp:* \
+            file://myapp --dir /backup
+        volumeMounts: 2
+          - mountPath: /backup
+            name: backup
+      ...output omitted...
+      volumes: 3
+      - name: backup
+        persistentVolumeClaim:
+          claimName: backup-volume
+          
+1. Log in to the internal registry and export all tags of the myapp image stream to the /backup path.
+
+2. Volume mount definition for the backup location.
+
+3. Volume definition for the backup persistent volume claims (PVC).</code></pre>
+<ul>
+  <li>You need the <code>system:image-puller</code> role on the OpenShift project to pull images from any image streams in that project. Project users and administrators already have this permission, as well as the <code>default</code> service account.</li>
+</ul>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
