@@ -2,7 +2,7 @@
 title: Backup, Restore, and Migration.
 description: 
 published: true
-date: 2025-11-07T15:11:25.175Z
+date: 2025-11-07T15:33:12.961Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-07T08:07:57.224Z
@@ -809,9 +809,173 @@ aws_secret_access_key=AWS_SECRET_ACCESS_KEY</code></pre>
   </table>
 </figure>
 <p>&nbsp;</p>
+<p>&nbsp;backup examples:</p>
+<pre><code class="language-plaintext">apiVersion: velero.io/v1
+kind: Backup
+metadata:
+  name: my-app-backup 
+  namespace: openshift-adp
+spec:
+  includedNamespaces: 
+  - my-app-project
+  ttl: 720h0m0s  
+  labelSelector:
+    matchLabels: 
+      app: my-app
+  includedResources: 
+  - deployments
+  - configmaps
+  - secrets
+  - services
+  - routes</code></pre>
 <p>&nbsp;</p>
+<pre><code class="language-plaintext">apiVersion: velero.io/v1
+kind: Backup
+metadata:
+  name: website
+  namespace: openshift-adp
+spec:
+  includedNamespaces:
+  - website
+  labelSelector:
+    matchLabels:
+      app: hugo
+  includedResources:
+  - imagestreams
+  - buildconfigs
+  - deployments
+  - services
+  - routes</code></pre>
 <p>&nbsp;</p>
+<pre><code class="language-plaintext">oc -n openshift-adp describe backup/website
+Status:
+  Backup Item Operations Attempted:  1
+  Backup Item Operations Completed:  1
+  Completion Timestamp:              2023-12-11T14:01:42Z 1
+  Expiration:                        2024-01-10T14:01:27Z 2
+  Format Version:                    1.1.0
+  Phase:                             Completed 3
+  Progress: 4
+    Items Backed Up:     7
+    Total Items:         7
+  Start Timestamp:       2023-12-11T14:01:27Z 5
+  Version:               1
+  
+1. 
+Backup completion time.
+
+2. 
+Backup expiration date, which is set with the ttl setting. The backup is automatically removed 
+
+from both the OpenShift cluster and the object storage after this date.
+
+3. 
+Status of the backup.
+
+4. 
+The backup progress, with the number of backed up items so far and the total items to back up.
+5. 
+Backup start time.</code></pre>
+<ul>
+  <li>The backup resource can have the following statuses during its lifetime:<ol>
+      <li><strong>New</strong>
+        <ul>
+          <li>Initial status when a backup is created. <mark class="marker-yellow">If the backup definition is incorrect, then the backup is aborted and its status changes to </mark><code><mark class="marker-yellow">FailedValidation</mark></code>. You can review the <code>validationErrors</code> status field for more information about the error.</li>
+          <li><mark class="marker-yellow">If the backup definition is valid, then the status changes to </mark><code><mark class="marker-yellow">InProgress</mark></code><mark class="marker-yellow">.</mark></li>
+        </ul>
+      </li>
+      <li><strong>InProgress</strong>
+        <ul>
+          <li>Status when the backup is in progress. <mark class="marker-yellow">During this phase, OADP backs up the resources that are specified in the backup definition and runs the backup hooks.</mark></li>
+          <li>When OADP uses <mark class="marker-yellow">additional plug-ins</mark>, such as OADP Data Mover, the backup enters the <code>WaitingForPluginOperations</code> status. After the plug-in processes are complete, the backup enters the <code>Finalizing</code> status where OADP<mark class="marker-yellow"> saves all the remaining backup items, such as backup logs and metadata, to the object storage.</mark></li>
+          <li>If backing up some resources fails, then the status changes in turn to <code>WaitingForPluginOperationsPartiallyFailed</code>, <code>FinalizingPartiallyFailed</code>, and then <code>PartiallyFailed</code>.</li>
+        </ul>
+      </li>
+      <li><strong>PartiallyFailed and Failed</strong>
+        <ul>
+          <li>The final status of a backup, wit<mark class="marker-yellow">h some missing resources because of a backup failure</mark>. A partially failed backup can still restore a project, but incompletely. A backup with the <code>Failed</code> status cannot be restored.</li>
+          <li>You can review the <code>failureReason</code> status field for more information about the error.</li>
+        </ul>
+      </li>
+      <li><strong>Completed</strong>
+        <ul>
+          <li>Final status of a successfully completed backup. All the data is in the object storage and the backup is ready to use in a restore.</li>
+        </ul>
+      </li>
+    </ol>
+  </li>
+</ul>
+<p>Restore examples:</p>
+<pre><code class="language-plaintext">apiVersion: velero.io/v1
+kind: Restore
+metadata:
+  name: restore-name 1
+  namespace: openshift-adp
+spec:
+  backupName: backup-name 2
+  
+1. Name of the restore resource
+
+
+2. Name of the backup resource to restore</code></pre>
 <p>&nbsp;</p>
+<blockquote>
+  <p>OADP restores only the resources that are not already in the destination namespace. The destination namespace is the same as in the backup, unless you use the <code>namespaceMapping</code> field to specify a different namespace.</p>
+</blockquote>
+<pre><code class="language-plaintext">apiVersion: velero.io/v1
+kind: Restore
+metadata:
+  name: website-stage
+  namespace: openshift-adp
+spec:
+  backupName: website
+  namespaceMapping:
+    website: website-stage</code></pre>
+<p>&nbsp;</p>
+<pre><code class="language-plaintext">
+
+[user@host ~]$ oc -n openshift-adp describe restore/website-stage
+Name:         website-stage
+Namespace:    openshift-adp
+...output omitted...
+Spec:
+  Backup Name:  website
+  Excluded Resources: 1
+    nodes
+    events
+    events.events.k8s.io
+    backups.velero.io
+    restores.velero.io
+    resticrepositories.velero.io
+    csinodes.storage.k8s.io
+    volumeattachments.storage.k8s.io
+    backuprepositories.velero.io
+  Item Operation Timeout:  1h0m0s
+  Namespace Mapping:
+    Website:  website-stage
+Status:
+  Completion Timestamp:  2023-12-12T09:36:23Z 2
+  Phase:                 Completed 3
+  Progress: 4
+    Items Restored:                   7
+    Total Items:                      7
+  Restore Item Operations Attempted:  1
+  Restore Item Operations Completed:  1
+  Start Timestamp:                    2023-12-12T09:36:14Z 5
+1. 
+OADP automatically excludes some resources from the restore, such as Kubernetes events and OADP custom resources. You can modify this list with the excludedResources field in the restore definition.
+
+2. 
+Restore completion time.
+
+3. 
+Status of the restore.
+
+4. 
+The restore progress, with the number of restored items so far and the total items to restore.
+
+5. 
+Restore start time.</code></pre>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
