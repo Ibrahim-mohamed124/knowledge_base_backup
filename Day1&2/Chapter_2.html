@@ -2,7 +2,7 @@
 title: Backup, Restore, and Migration.
 description: 
 published: true
-date: 2025-11-07T12:50:31.793Z
+date: 2025-11-07T13:09:56.851Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-07T08:07:57.224Z
@@ -431,6 +431,7 @@ application data volume.
       <li>Velero: backs up the native kubernetes resources, and integrates with openshift plug-in to back up openshift resources and internal container images</li>
       <li>Kopia: work with CSI plug-in to move the actual data in snapshots to other destinations</li>
       <li>Data Mover: export snapshot content to object storage by using Kopia and the CSI plug-in.</li>
+      <li>CSI plug-in: is used to take volume snapshots and provision volumes</li>
     </ol>
   </li>
   <li>Velero not only exports and imports resources; it also performs <mark class="marker-yellow">additional processing on the resources.&nbsp;</mark>
@@ -442,9 +443,43 @@ application data volume.
       <li>Skip managed resources such as a replica set that deployment owns.</li>
     </ul>
   </li>
-  <li>&nbsp;</li>
+  <li>Data Volume Snapshot could be taken by a cloud provider snapshot APIs or by the kubernetes CSI itself. If a volume does not support either of the APIs could use the file-system backup solution FBS that is implemented by Kopia.<ul>
+      <li>Kopia access the volume through the volume mount point in the cluster node so the application must be running but quiesced during the backup.</li>
+    </ul>
+  </li>
+  <li>To take <mark class="marker-yellow">consistent backups, </mark>use the backup and restore <mark class="marker-yellow">pre-hooks</mark> to run commands before and after the backup to quiesce an application, such as a transactional database, to flush pending I/O operations to the storage back end and pause future application writing operations to avoid any data loss or corruption during the backup. A <mark class="marker-yellow">post-hook </mark>is used to resume the application operations.</li>
 </ul>
-<p>&nbsp;</p>
+<blockquote>
+  <p>If you use volume snapshots, then the hooks are executed just before and after the snapshot creation, which significantly reduces the time that the application is in read-only mode.</p>
+</blockquote>
+<ul>
+  <li>OADP Data Mover: Data Mover uses Kopia to upload and encrypt snapshot content to a unified backup repository on the object storage.&nbsp;</li>
+  <li>Velero Plug-ins: extend the OADP capabilities and backup logic by using the Velero plug-in system. Support for various cloud providers, storage solutions, and additional CRDs are available with integrated plug-ins.<ul>
+      <li><code><strong>openshift</strong></code>
+        <ul>
+          <li>Provides additional logic to back up and restore OpenShift resources, including container images from the internal registry.</li>
+        </ul>
+      </li>
+      <li><code><strong>kubevirt</strong></code>
+        <ul>
+          <li>Provides additional logic to back up and restore virtual machines and other OpenShift Virtualization resources.</li>
+        </ul>
+      </li>
+      <li><code><strong>csi</strong></code>
+        <ul>
+          <li>Provides volume snapshot support by using the Kubernetes CSI Snapshot API.</li>
+        </ul>
+      </li>
+      <li>third-party plug-ins:<ul>
+          <li>OpenStack plug-in for object storage on Swift and volume snapshots on Cinder.</li>
+          <li>HPE plug-in for volume snapshots on HPE Nimble Storage.</li>
+          <li>DigitalOcean plug-in for volume snapshots on DigitalOcean Volumes Block Storage.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+<h4>OADP API Resources</h4>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
