@@ -2,7 +2,7 @@
 title: Backup, Restore, and Migration.
 description: 
 published: true
-date: 2025-11-07T15:36:22.468Z
+date: 2025-11-07T15:42:27.865Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-07T08:07:57.224Z
@@ -1023,3 +1023,63 @@ The /oadp/restores path contains all the information about each restore, includi
 logs. Each subdirectory is unique to a single restore attempt and relates to the matching restore 
 
 resource in the cluster.</code></pre>
+<p>&nbsp;</p>
+<h4>Introducing the Velero Tool</h4>
+<ul>
+  <li>OADP provides the <code>velero</code> command-line tool that can retrieve backup and restore information from both the object storage and the OpenShift cluster.</li>
+</ul>
+<pre><code class="language-plaintext">alias velero='\
+  oc -n openshift-adp exec deployment/velero -c velero -it -- ./velero'</code></pre>
+<ul>
+  <li>The <code>velero</code> command can use the same syntax as the <code>kubectl</code> or <code>oc</code> commands, but is limited to OADP Kubernetes custom resources such as the <code>backup</code>, <code>restore</code>, and <code>schedule</code> resources.</li>
+</ul>
+<pre><code class="language-plaintext">velero get resource
+velero describe resource/name --details</code></pre>
+<pre><code class="language-plaintext">[user@host ~]$ velero describe backup website --details
+Name:         website
+Namespace:    openshift-adp
+...output omitted...
+
+Phase:  Completed 
+
+Namespaces: 
+  Included:  website
+  Excluded:  &lt;none&gt;
+
+Resources:
+  Included:        imagestreams, buildconfigs, deployments, services, routes
+  Excluded:        &lt;none&gt;
+  Cluster-scoped:  auto
+
+Label selector:  app=hugo
+
+...output omitted...
+
+Started:    2023-12-11 14:01:27 +0000 UTC
+Completed:  2023-12-11 14:01:42 +0000 UTC
+
+Expiration: 2024-01-10 14:01:27 +0000 UTC
+
+Total items to be backed up:  7
+Items backed up:              7
+
+Resource List: 
+  apps/v1/Deployment:
+    - website/hugo
+  build.openshift.io/v1/BuildConfig:
+    - website/hugo
+  image.openshift.io/v1/ImageStream:
+    - website/hugo
+    - website/nginx-122
+  route.openshift.io/v1/Route:
+    - website/hugo
+  v1/Service:
+    - website/hugo
+
+Velero-Native Snapshots: &lt;none included&gt;</code></pre>
+<p>&nbsp;</p>
+<pre><code class="language-plaintext"> velero create restore website-dev \
+  --from-backup=website-label --namespace-mappings=website:website-dev</code></pre>
+<blockquote>
+  <p>Avoid including resources that other resources manage, such as builds, endpoints, or replica sets. It is unnecessary and can cause issues during the restore. You must filter to include in the backup only those resources that your application requires for a successful deployment.</p>
+</blockquote>
