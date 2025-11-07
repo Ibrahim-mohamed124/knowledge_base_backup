@@ -2,7 +2,7 @@
 title: Backup, Restore, and Migration.
 description: 
 published: true
-date: 2025-11-07T18:13:16.746Z
+date: 2025-11-07T18:23:03.042Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-07T08:07:57.224Z
@@ -1297,6 +1297,108 @@ Sets the backup definition template by using the same settings as in a backup re
 </ul>
 <blockquote>
   <p>OADP does not immediately delete data from the backup repository on the object storage. OADP occasionally runs repository maintenance, such as to delete data that backups no longer need. OADP might start deleting data from the object storage up to 24 hours after a backup is deleted.</p>
+</blockquote>
+<h3>Backing up Volumes with File System Backup</h3>
+<figure class="image image_resized" style="width:100%;"><img src="/oadp_backup_restic.svg"></figure>
+<figure class="table">
+  <table style="background-color:rgb(255, 255, 255);">
+    <tbody>
+      <tr>
+        <td style="padding:0px;vertical-align:top;">
+          <figure class="image image_resized" style="width:22px;"><img src="https://rol.redhat.com/rol/static/roc/Common_Content/images/1.svg" alt="1"></figure>
+        </td>
+        <td style="padding:0px;vertical-align:top;">The administrator creates a backup resource in the <code>openshift-adp</code> namespace that triggers the backup process.</td>
+      </tr>
+      <tr>
+        <td style="padding:0px;vertical-align:top;">
+          <figure class="image image_resized" style="width:22px;"><img src="https://rol.redhat.com/rol/static/roc/Common_Content/images/2.svg" alt="2"></figure>
+        </td>
+        <td style="padding:0px;vertical-align:top;">Velero exports all Kubernetes resources from the application namespace to the backup storage location.</td>
+      </tr>
+      <tr>
+        <td style="padding:0px;vertical-align:top;">
+          <figure class="image image_resized" style="width:22px;"><img src="https://rol.redhat.com/rol/static/roc/Common_Content/images/3.svg" alt="3"></figure>
+        </td>
+        <td style="padding:0px;vertical-align:top;">The <code>node-agent</code> daemon set, which runs on the same node as the application pod, exports the volume data from the volume mount point on the cluster node to the backup storage location.</td>
+      </tr>
+    </tbody>
+  </table>
+</figure>
+<p>&nbsp;</p>
+<figure class="image image_resized" style="width:100%;"><img src="/oadp_restore_restic.svg"></figure>
+<figure class="table">
+  <table style="background-color:rgb(255, 255, 255);">
+    <tbody>
+      <tr>
+        <td style="padding:0px;vertical-align:top;">
+          <figure class="image image_resized" style="width:22px;"><img src="https://rol.redhat.com/rol/static/roc/Common_Content/images/1.svg" alt="1"></figure>
+        </td>
+        <td style="padding:0px;vertical-align:top;">The administrator creates a restore resource in the <code>openshift-adp</code> namespace, which triggers the restore process.</td>
+      </tr>
+      <tr>
+        <td style="padding:0px;vertical-align:top;">
+          <figure class="image image_resized" style="width:22px;"><img src="https://rol.redhat.com/rol/static/roc/Common_Content/images/2.svg" alt="2"></figure>
+        </td>
+        <td style="padding:0px;vertical-align:top;">Velero imports the Kubernetes resources from the backup storage location to the application namespace.</td>
+      </tr>
+      <tr>
+        <td style="padding:0px;vertical-align:top;">
+          <figure class="image image_resized" style="width:22px;"><img src="https://rol.redhat.com/rol/static/roc/Common_Content/images/3.svg" alt="3"></figure>
+        </td>
+        <td style="padding:0px;vertical-align:top;">The <code>node-agent</code> daemon set, which runs on the same node as the application pod, imports the application data from the backup storage location to the mount point for the application volume on the cluster node.</td>
+      </tr>
+    </tbody>
+  </table>
+</figure>
+<p>&nbsp;</p>
+<ul>
+  <li>You can instruct OADP to back up all volumes in a backup definition with FSB by using the <code>defaultVolumesToFsBackup</code> option:</li>
+</ul>
+<pre><code class="language-plaintext">apiVersion: velero.io/v1
+kind: Backup
+metadata:
+  name: &lt;backup-name&gt;
+  namespace: openshift-adp
+spec:
+  defaultVolumesToFsBackup: true</code></pre>
+<p>&nbsp;</p>
+<ul>
+  <li>annotate the application pod t<mark class="marker-yellow">o specify which volumes to back up with FSB</mark> by using the <code>backup.velero.io/backup-volumes</code> annotation.&nbsp;<ul>
+      <li>OADP backs up the volumes in the annotation with FSB, and all other volumes with snapshots.</li>
+    </ul>
+  </li>
+</ul>
+<p>&nbsp;</p>
+<pre><code class="language-plaintext">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: website-nginx
+  namespace: org-website
+spec:
+  template:
+    metadata:
+      annotations:
+        backup.velero.io/backup-volumes: wwwdata &gt;&gt; List of volumes to back up with FSB. 
+        You must use the same volume name that is defined in the pod definition.
+
+
+    spec:
+      containers:
+        name: web
+        image: registry.access.redhat.com/ubi9/nginx-120
+        ...output omitted...
+        volumeMounts:
+        - mountPath: /opt/app-root/src
+          name: wwwdata
+      ...output omitted...
+      volumes:
+      - name: wwwdata
+        persistentVolumeClaim:
+          claimName: nginx-wwwdata
+...output omitted...</code></pre>
+<p>&nbsp;</p>
+<blockquote>
+  <p>Only volumes that are compatible with volume snapshots are included in the backup by default. You must enable FSB to include volumes in your backup that are not compatible with volume snapshots.</p>
 </blockquote>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
