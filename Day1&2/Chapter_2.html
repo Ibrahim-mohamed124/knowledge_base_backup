@@ -2,7 +2,7 @@
 title: Backup, Restore, and Migration.
 description: 
 published: true
-date: 2025-11-07T18:23:03.042Z
+date: 2025-11-07T18:24:58.564Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-07T08:07:57.224Z
@@ -1400,6 +1400,29 @@ spec:
 <blockquote>
   <p>Only volumes that are compatible with volume snapshots are included in the backup by default. You must enable FSB to include volumes in your backup that are not compatible with volume snapshots.</p>
 </blockquote>
+<h3>Troubleshooting Backups and Restores</h3>
+<pre><code class="language-plaintext">velero get backup mybackup
+
+velero describe backup mybackup
+Name:         mybackup
+Namespace:    openshift-adp
+Labels:       velero.io/storage-location=oadp-backup-1
+Annotations:  velero.io/source-cluster-k8s-gitversion=v1.25.7+eab9cc9
+              velero.io/source-cluster-k8s-major-version=1
+              velero.io/source-cluster-k8s-minor-version=25
+
+Phase:  PartiallyFailed (run `velero backup logs mybackup` for more information)
+
+Errors:
+  Velero:     &lt;none&gt;
+  Cluster:    &lt;none&gt;
+  Namespaces:
+    database:   resource: /pods name: /mariadb-757c5bdc88-mrwhb error: /command terminated with exit code 1
+...output omitted...
+
+velero backup logs mybackup
+
+velero backup logs mybackup | grep hookPhase</code></pre>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
