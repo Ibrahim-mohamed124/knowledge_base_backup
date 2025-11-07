@@ -2,7 +2,7 @@
 title: Backup, Restore, and Migration.
 description: 
 published: true
-date: 2025-11-07T18:09:24.776Z
+date: 2025-11-07T18:13:16.746Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-07T08:07:57.224Z
@@ -1285,4 +1285,22 @@ Sets the backup definition template by using the same settings as in a backup re
 <ul>
   <li>Backup resources that are created from a schedule inherit the schedule's labels. In addition, the <code>velero.io/schedule-name</code> label is set on the backup resources with the schedule name.</li>
 </ul>
+<h3>Cleaning Backups</h3>
+<ul>
+  <li>OADP automatically re-creates any backup that you delete with the <code>oc</code> command. To permanently delete a backup, you must delete it from the object storage.</li>
+  <li>Use the <code>velero</code> command to delete backup and restore information from the object storage, and all the associated resources from the cluster:</li>
+</ul>
+<pre><code class="language-plaintext"> velero delete backup backup-name</code></pre>
+<ul>
+  <li>The backup status changes to <code>Deleting</code>, and OADP removes all restore resources that are attached to this backup from both the OpenShift cluster and the object storage. Then the backup itself is removed from the cluster and the object storage.</li>
+  <li>By default, OADP deletes backups after 30 days. The minimum lifetime of a backup is 1 hour.</li>
+</ul>
+<blockquote>
+  <p>OADP does not immediately delete data from the backup repository on the object storage. OADP occasionally runs repository maintenance, such as to delete data that backups no longer need. OADP might start deleting data from the object storage up to 24 hours after a backup is deleted.</p>
+</blockquote>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
 <p>&nbsp;</p>
