@@ -2,7 +2,7 @@
 title: Backup, Restore, and Migration.
 description: 
 published: true
-date: 2025-11-07T10:58:08.138Z
+date: 2025-11-07T12:50:14.642Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-07T08:07:57.224Z
@@ -269,6 +269,7 @@ spec:
 3. Snapshot class name for the volume snapshot.
 
 4. Name of the source PVC that is used for the snapshot.</code></pre>
+<p>&nbsp;</p>
 <blockquote>
   <p>When creating an application-consistent backup, the application must be quiesced or scaled down before the snapshot creation. The application can safely be resumed or scaled up after the snapshot is created and ready to use.</p>
 </blockquote>
@@ -341,13 +342,12 @@ spec:
           claimName: my-snapshot-volume
 1. Archive the snapshot content and copy the archive to a remote S3 bucket.
 
-2. 
-Volume mount definition for the snapshot data in the container.
+2. Volume mount definition for the snapshot data in the container.
 
-3. 
-Volume definition for the snapshot PVC.</code></pre>
+3. Volume definition for the snapshot PVC.</code></pre>
+<p>&nbsp;</p>
 <ul>
-  <li>To export the snapshot content locally from a pod by using the <code>oc cp</code> command.&nbsp;</li>
+  <li>To export the snapshot content locally from a pod by using the <code>oc cp</code> command.</li>
 </ul>
 <pre><code class="language-plaintext">apiVersion: v1
 kind: Pod
@@ -369,13 +369,12 @@ spec:
       claimName: my-snapshot-volume
 1. The sleep infinity command ensures that the pod stays alive during the manual export.
 
-2. 
-Volume mount definition for the snapshot data in the container.
+2. Volume mount definition for the snapshot data in the container.
 
-3. 
-Volume definition for the snapshot PVC.</code></pre>
+3. Volume definition for the snapshot PVC.</code></pre>
 <p>&nbsp;</p>
 <pre><code class="language-plaintext"> oc cp export:/snapshot /tmp/backup</code></pre>
+<p>&nbsp;</p>
 <blockquote>
   <p>The <code>tar</code> binary must be installed in the remote container for the <code>oc cp</code> command to work.</p>
 </blockquote>
@@ -410,12 +409,10 @@ spec:
       - name: application-data
         persistentVolumeClaim:
           claimName: application-data
-1. 
-Install the s3cmd tool, fetch the backup from the S3 bucket, and extract the archive inside the application data volume.
+1. Install the s3cmd tool, fetch the backup from the S3 bucket, and extract the archive inside the application data volume.
 2. Volume mount definition for the application data in the container.
 
-3. 
-Volume definition for the application PVC.</code></pre>
+3. Volume definition for the application PVC.</code></pre>
 <p>&nbsp;</p>
 <h2>OADP Operator Deployment and Features</h2>
 <ul>
@@ -431,7 +428,7 @@ Volume definition for the application PVC.</code></pre>
 <ul>
   <li>the main components that OADP uses:<ol>
       <li>Velero: backs up the native kubernetes resources, and integrates with openshift plug-in to back up openshift resources and internal container images</li>
-      <li>Kopia: work with CSI plug-in to move the actual data in snapshots to other destinations&nbsp;</li>
+      <li>Kopia: work with CSI plug-in to move the actual data in snapshots to other destinations</li>
       <li>Data Mover: export snapshot content to object storage by using Kopia and the CSI plug-in.</li>
     </ol>
   </li>
