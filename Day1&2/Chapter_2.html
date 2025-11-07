@@ -2,7 +2,7 @@
 title: Backup, Restore, and Migration.
 description: 
 published: true
-date: 2025-11-07T08:20:34.952Z
+date: 2025-11-07T08:29:23.355Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-07T08:07:57.224Z
@@ -145,6 +145,27 @@ spec:
 <ul>
   <li>You need the <code>system:image-puller</code> role on the OpenShift project to pull images from any image streams in that project. Project users and administrators already have this permission, as well as the <code>default</code> service account.</li>
 </ul>
+<h4>Import Container Images</h4>
+<pre><code class="language-plaintext">skopeo copy \
+  docker://remote-registry.example.com/myimage:latest \
+  docker://${REGISTRY}/project_name/mynewimagestream:latest</code></pre>
 <p>&nbsp;</p>
+<p>or</p>
+<pre><code class="language-plaintext"> oc image mirror \
+  remote-registry.example.com/myimage:latest \
+  ${REGISTRY}/project_name/mynewimagestream:latest</code></pre>
+<p>&nbsp;</p>
+<p>or</p>
+<pre><code class="language-plaintext">podman load -i image_backup.tar.bz2
+
+podman tag \
+  registry.apps.ocp4.example.com/application/myapp:1.2.3 \
+  ${REGISTRY}/newproject/myapp:1.2.3
+  
+podman push ${REGISTRY}/newproject/myapp:1.2.3</code></pre>
+<blockquote>
+  <p>You need the <code>system:image-pusher</code> role on the OpenShift project to push images to any image streams in that project. Project users and administrators already have this permission, as well as the <code>builder</code> service account.</p>
+</blockquote>
+<h3>Backing Up Application Data</h3>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
