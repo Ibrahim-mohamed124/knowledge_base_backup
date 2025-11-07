@@ -2,7 +2,7 @@
 title: Backup, Restore, and Migration.
 description: 
 published: true
-date: 2025-11-07T17:37:46.719Z
+date: 2025-11-07T17:55:18.082Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-07T08:07:57.224Z
@@ -1083,4 +1083,111 @@ Velero-Native Snapshots: &lt;none included&gt;</code></pre>
 <blockquote>
   <p>Avoid including resources that other resources manage, such as builds, endpoints, or replica sets. It is unnecessary and can cause issues during the restore. You must filter to include in the backup only those resources that your application requires for a successful deployment.</p>
 </blockquote>
+<h4>Backing up a Stateful Application with Backup Hooks</h4>
+<ul>
+  <li>OADP creates crash-consistent backups of your application by using volume snapshots. To back up persistent volumes, you <mark class="marker-yellow">must include</mark> the <code>persistentvolumeclaims</code> and <code>persistentvolumes</code> resource types in the <mark class="marker-yellow">backup definition.</mark></li>
+</ul>
+<blockquote>
+  <p><mark class="marker-pink">OpenShift assigns to each namespace a unique UID and GID that the application pod uses to write data to persistent volumes. If you restore an application to a new namespace, then OpenShift assigns a new set of UIDs and GIDs that prevent the application from accessing its data.So that OADP can restore the UID and GID, include the </mark><code><mark class="marker-pink">namespace</mark></code><mark class="marker-pink"> resource type in the backup definition. If you use a label selector in the backup definition, then you must add the corresponding label to the namespace. Alternatively, you can use the </mark><code><mark class="marker-pink">kubernetes.io/metadata.name</mark></code><mark class="marker-pink"> label that Kubernetes automatically sets on all namespaces.</mark></p>
+</blockquote>
+<ul>
+  <li>use backup hooks to specify a list of commands to execute in the application pod before and after the backup is created. You can then use those hooks to quiesce the application and perform an application-consistent backup.</li>
+  <li>To configure backup hooks, you must specify the target pod (by using labels), the container name, and the commands to run on that container.</li>
+  <li><strong>Pre backup hooks</strong>
+    <ul>
+      <li>A <code>pre</code> backup hook is<mark class="marker-yellow"> executed before any other backup action on the pod. </mark>If the command fails, then the backup stops immediately with the <code>Failed</code> status.</li>
+      <li>As an example, you can use this type of hook to quiesce and prepare the application for backup.</li>
+    </ul>
+  </li>
+  <li><strong>Post backup hooks</strong>
+    <ul>
+      <li>A <code>post</code> backup hook is<mark class="marker-yellow"> executed after the backup of the pod and its attached volumes. </mark>If the command fails, then the backup stops immediately with the <code>PartiallyFailed</code> status.</li>
+      <li>As an example, you can use this type of hook to resume or unlock the application after the backup is complete.</li>
+    </ul>
+  </li>
+  <li><strong>Init restore hooks</strong>
+    <ul>
+      <li>An <code>init</code> restore hook is<mark class="marker-yellow"> executed after the pod and its attached volumes are restored,</mark> but<mark class="marker-yellow"> before any container on that pod starts</mark>. The <code>init</code> restore hook <mark class="marker-yellow">defines one or more init containers that follow the same specification as the init container in a pod definition.</mark></li>
+      <li>OADP does not monitor the status of the init container. Therefore, if the command fails, then the <mark class="marker-yellow">restore continues without any error or warning</mark>, but the application pod is in error with the <code>Init:Error</code> status.</li>
+      <li>As an example, you can use this type of hook to restore a database that the application requires and that is external to the OpenShift cluster.</li>
+    </ul>
+  </li>
+  <li><strong>Post restore hooks</strong>
+    <ul>
+      <li>A <code>post</code> restore hook is executed <mark class="marker-yellow">when the application pod is restored and running. </mark>If the command fails, then <mark class="marker-yellow">the error is logged and the restore continues.</mark></li>
+      <li>As an example, you can use this type of hook to run an integrity check on the restored database.</li>
+    </ul>
+  </li>
+</ul>
+<pre><code class="language-plaintext">apiVersion: velero.io/v1
+kind: Backup
+metadata:
+  name: mongodb
+  namespace: openshift-adp
+spec:
+  includedNamespaces:
+  - mongodb
+  orLabelSelectors: 1
+  - matchLabels:
+      app: mongodb
+  - matchLabels:
+      kubernetes.io/metadata.name: mongodb
+  includedResources: 2
+  - deployments
+  - services
+  - secret
+  - pvc
+  - pv
+  - pods
+  - namespace
+  hooks:
+    resources:
+    - name: mongodb-lock
+      labelSelector: 3
+        matchLabels:
+          app: mongodb
+      pre: 4
+      - exec:
+          container: mongodb
+          command:
+          - /usr/bin/mongosh
+          - --eval
+          - db.fsyncLock();
+      post: 5
+      - exec:
+          container: mongodb
+          command:
+          - /usr/bin/mongosh
+          - --eval
+          - db.fsyncUnlock();
+1. 
+Resources with the app: mongodb or kubernetes.io/metadata.name: mongodb label are included in 
+the backup.
+
+2. 
+The pvc and pv resource types must be specified in the includedResources key to back up the 
+
+application volume. The pods resource type must also be specified for the backup hooks to be executed. The namespace resource type must be specified to preserve the UID and GID that are used in the application volume.
+
+3. 
+The hook runs on all pods that match the label selector.
+
+4. 
+The pre backup hook executes the db.fsyncLock() MongoDB command in the mongodb container to 
+
+lock the database before the volume snapshot.
+
+5. 
+The post backup hook executes the db.fsyncUnlock() MongoDB command to unlock the database 
+
+after the backup is completed.</code></pre>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
 <p>&nbsp;</p>
