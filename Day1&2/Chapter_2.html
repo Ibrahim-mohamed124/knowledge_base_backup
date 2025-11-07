@@ -2,7 +2,7 @@
 title: Backup, Restore, and Migration.
 description: 
 published: true
-date: 2025-11-07T13:33:34.735Z
+date: 2025-11-07T14:57:01.464Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-07T08:07:57.224Z
@@ -453,7 +453,7 @@ application data volume.
   <p>If you use volume snapshots, then the hooks are executed just before and after the snapshot creation, which significantly reduces the time that the application is in read-only mode.</p>
 </blockquote>
 <ul>
-  <li>OADP Data Mover: Data Mover uses Kopia to upload and encrypt snapshot content to a unified backup repository on the object storage.&nbsp;</li>
+  <li>OADP Data Mover: Data Mover uses Kopia to upload and encrypt snapshot content to a unified backup repository on the object storage.</li>
   <li>Velero Plug-ins: extend the OADP capabilities and backup logic by using the Velero plug-in system. Support for various cloud providers, storage solutions, and additional CRDs are available with integrated plug-ins.<ul>
       <li><code><strong>openshift</strong></code>
         <ul>
@@ -516,6 +516,7 @@ spec:
         objectStorage:
           bucket: my-bucket
           prefix: oadp</code></pre>
+<p>&nbsp;</p>
 <ul>
   <li><code><strong>BackupStorageLocation</strong></code>
     <ul>
@@ -658,6 +659,7 @@ aws_secret_access_key=AWS_SECRET_ACCESS_KEY</code></pre>
 <p>&nbsp;</p>
 <pre><code class="language-plaintext">oc create secret generic cloud-credentials \
   --from-file cloud=credentials-velero</code></pre>
+<p>&nbsp;</p>
 <blockquote>
   <p>The Velero secret must be created before the <code>DataProtectionApplication</code> object, or the installation will fail.</p>
 </blockquote>
@@ -684,12 +686,17 @@ aws_secret_access_key=AWS_SECRET_ACCESS_KEY</code></pre>
 
 </code></pre>
 <p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
+<h4>CSI Snapshots</h4>
+<ul>
+  <li>For OADP to use a volume snapshot class, you must add the <code>velero.io/csi-volumesnapshot-class: "true"</code> label. <mark class="marker-yellow">Only one volume snapshot class per driver needs this label.</mark></li>
+</ul>
+<pre><code class="language-plaintext">oc label volumesnapshotclass my-snapshot-storageclass \
+  velero.io/csi-volumesnapshot-class="true"</code></pre>
+<h3>Verification and Troubleshooting</h3>
+<ul>
+  <li>The OADP operator creates and validates each backup storage location that is defined in the <code>DataProtectionApplication</code> object. OADP tries to connect to the object storage with the provided credentials and validates the configuration. If the configuration is correct, then the backup storage location enters the <code>Available</code> phase.</li>
+</ul>
+<pre><code class="language-plaintext">oc -n openshift-adp get backupstoragelocation</code></pre>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
