@@ -2,7 +2,7 @@
 title: Backup, Restore, and Migration.
 description: 
 published: true
-date: 2025-11-07T12:50:14.642Z
+date: 2025-11-07T12:50:31.793Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-07T08:07:57.224Z
@@ -409,7 +409,8 @@ spec:
       - name: application-data
         persistentVolumeClaim:
           claimName: application-data
-1. Install the s3cmd tool, fetch the backup from the S3 bucket, and extract the archive inside the application data volume.
+1. Install the s3cmd tool, fetch the backup from the S3 bucket, and extract the archive inside the 
+application data volume.
 2. Volume mount definition for the application data in the container.
 
 3. Volume definition for the application PVC.</code></pre>
