@@ -1,0 +1,81 @@
+<!--
+title: Backup, Restore, and Migration.
+description: 
+published: true
+date: 2025-11-07T08:07:57.224Z
+tags: 
+editor: ckeditor
+dateCreated: 2025-11-07T08:07:57.224Z
+-->
+
+<h1>Chapter&nbsp;2.&nbsp; Backup, Restore, and Migration of Applications with OADP</h1>
+<ul>
+  <li>To restore an application fully in k8s the following objects must be backed up:<ul>
+      <li>Kubernetes <mark class="marker-yellow">resources</mark> that define the application and its settings.</li>
+      <li><mark class="marker-yellow">Container images </mark>in the internal registry that containers of this application use.</li>
+      <li><mark class="marker-yellow">Data</mark> that is stored in persistent volumes or object storage for a stateful application.</li>
+    </ul>
+  </li>
+</ul>
+<h3>Backing Up Application Resources</h3>
+<ul>
+  <li>Backing up an entire application involves:<ul>
+      <li>Listing all the application resources</li>
+      <li>Exporting the application resources</li>
+      <li>Cleaning the application resources</li>
+      <li>Deploying the cleaned resources&nbsp;</li>
+    </ul>
+  </li>
+</ul>
+<blockquote>
+  <p>yq utility is very useful to clean unwanted attributes from a yaml file</p>
+</blockquote>
+<h3>Backing Up Container Images</h3>
+<ul>
+  <li>Podman and Skopeo</li>
+  <li>To access the registry from outside the cluster or to export images from your local machine, an OpenShift administrator must expose the registry externally.</li>
+</ul>
+<pre><code class="language-plaintext">oc patch \
+  configs.imageregistry.operator.openshift.io/cluster \
+  --patch '{"spec":{"defaultRoute":true}}' \
+  --type merge</code></pre>
+<blockquote>
+  <p>The modification to the image registry operator triggers a redeployment of the OpenShift API server. It can take up to 10 minutes for the cluster to stabilize.</p>
+</blockquote>
+<ul>
+  <li>The operator creates a <code>default-route</code> route to expose externally the registry that uses the following URL format:</li>
+</ul>
+<pre><code class="language-plaintext">default-route-openshift-image-registry.apps-domain</code></pre>
+<pre><code class="language-plaintext"> REGISTRY=$(oc get \
+  route default-route \
+  -n openshift-image-registry \
+  --template '{{.spec.host}}')</code></pre>
+<ul>
+  <li>OpenShift users who do not have access to the <code>openshift-image-registry</code> namespace can retrieve the registry URL from any image stream:</li>
+</ul>
+<pre><code class="language-plaintext">oc -n openshift get is/cli \
+  -ojsonpath="{.status.publicDockerImageRepository}{'\n'}"
+</code></pre>
+<ul>
+  <li>You can then log in to the internal registry by using your OpenShift username and authentication token with the following command:</li>
+</ul>
+<pre><code class="language-plaintext">podman login \
+  -u $(oc whoami) \
+  -p $(oc whoami -t) \
+  --tls-verify=false \
+  $REGISTRY</code></pre>
+<ul>
+  <li>The <code>oc registry login</code> command automatically uses your authentication token and the internal registry URL from the OpenShift cluster.</li>
+  <li>The <code>oc</code> command stores the credentials in the <code>${HOME}/.docker/config.json</code> file in Base64 format. The Podman, Skopeo, and Docker clients can use the authentication details from that file to access an image registry.</li>
+</ul>
+<pre><code class="language-plaintext">oc registry login</code></pre>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
