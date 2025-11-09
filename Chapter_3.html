@@ -2,7 +2,7 @@
 title: Chapter 3.  Cluster Partitioning
 description: 
 published: true
-date: 2025-11-09T10:57:53.457Z
+date: 2025-11-09T12:19:55.415Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-09T10:57:53.457Z
@@ -25,17 +25,60 @@ dateCreated: 2025-11-09T10:57:53.457Z
 </ul>
 <h4>Node Labels</h4>
 <ul>
-  <li>Use node labels to configure compute nodes to be a member of a specific node pool.&nbsp;</li>
+  <li>Use node labels to configure compute nodes to be a member of a specific node pool.</li>
 </ul>
 <pre><code class="language-plaintext"> oc label node/worker01 node-pool=gpu</code></pre>
 <h4>Node Configuration</h4>
 <ul>
-  <li>manage nodes by defining groups of these nodes, which are called <i>machine configuration pools (MCP)</i>. The MCO uses the <code>master</code> and <code>worker</code> MCPs, by default. You can create custom MCPs for node pools. MCPs use labels to match one or more MCs to one or more nodes.</li>
+  <li>Manage nodes by defining groups of these nodes, which are called <i>machine configuration pools (MCP)</i>. The MCO uses the <code>master</code> and <code>worker</code> MCPs, by default. You can create custom MCPs for node pools. MCPs use labels to match one or more MCs to one or more nodes.</li>
 </ul>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
+<h3>The Machine Configuration Operator</h3>
+<ul>
+  <li>The entire operating system is updated as a single image, instead of on a package-by-package basis.</li>
+  <li>The MCO comprises the following pods:<ul>
+      <li><code><strong>machine-config-operator</strong></code>
+        <ul>
+          <li>These pods form the <mark class="marker-yellow">main operator workload</mark> that manages the rest of the MCO components.</li>
+        </ul>
+      </li>
+      <li><code><strong>machine-config-controller</strong></code>
+        <ul>
+          <li>The machine configuration controller (MCC) manages the<mark class="marker-yellow"> synchronization of machine upgrades according to specified configurations through a machine configuration object.</mark> The MCC offers options to upgrade individual sets of machines.</li>
+        </ul>
+      </li>
+      <li><code><strong>machine-config-server</strong></code>
+        <ul>
+          <li>The machine configuration server (MCS)<mark class="marker-yellow"> provides instance customizations to machines that join the cluster.</mark> The MCS uses Ignition to provide the instance customizations to cluster nodes that join the cluster. <mark class="marker-yellow">The RHCOS operating system downloads and processes Ignition files at boot time.</mark></li>
+        </ul>
+      </li>
+      <li>&nbsp;MCO also requires the<mark class="marker-yellow"> machine-config-daemon daemonset</mark> that RHCOS provides.</li>
+    </ul>
+  </li>
+  <li>The MCO can manage the following resources:<ul>
+      <li>systemd services</li>
+      <li>SSH keys</li>
+      <li>Kernel arguments</li>
+      <li>Files in the <code>/var</code> or <code>/etc</code> directories.</li>
+      <li>The MCO can also manage directories, such as the <code>/opt</code> and <code>/usr/local</code> directories, which can be writeable if symbolically linked to the <code>/var</code> or <code>/etc</code> directories.</li>
+    </ul>
+  </li>
+  <li>The MCO defines two custom resources (CRs), which are part of the <code>machineconfiguration.openshift.io/v1</code> API group.</li>
+</ul>
+<ol>
+  <li><code><strong>MachineConfig:</strong></code>&nbsp;<ul>
+      <li>A machine configuration (MC) CR declares instance customizations by using the <mark class="marker-yellow">Ignition configuration format.</mark></li>
+    </ul>
+  </li>
+  <li><strong>MachineConfigPool</strong>
+    <ul>
+      <li>A machine configuration pool (MCP) CR uses labels to match one or more MCs to one or more nodes by means of the <code>machineConfigSelector</code> and <code>nodeSelector</code> parameters</li>
+    </ul>
+  </li>
+</ol>
+<figure class="image image_resized" style="width:100%;"><img src="/mco-schematic.svg"></figure>
+<ul>
+  <li>The MCO also manages two custom resources (CRs) for modifying <mark class="marker-yellow">CRI-O container runtime settings and the Kubelet service:</mark> the <code>ContainerRuntimeConfig</code> and <code>KubeletConfig</code> CRs, respectively.</li>
+</ul>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
