@@ -2,7 +2,7 @@
 title: Chapter 3.  Cluster Partitioning
 description: 
 published: true
-date: 2025-11-09T12:19:55.415Z
+date: 2025-11-09T13:42:11.698Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-09T10:57:53.457Z
@@ -80,10 +80,51 @@ dateCreated: 2025-11-09T10:57:53.457Z
   <li>The MCO also manages two custom resources (CRs) for modifying <mark class="marker-yellow">CRI-O container runtime settings and the Kubelet service:</mark> the <code>ContainerRuntimeConfig</code> and <code>KubeletConfig</code> CRs, respectively.</li>
 </ul>
 <p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
+<h3>Machine Configurations</h3>
+<ul>
+  <li>Ignition files encode file contents by using the Base64 encoding scheme.&nbsp;</li>
+</ul>
+<pre><code class="language-plaintext">apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: worker 1
+  name: 60-journald 2
+spec:
+  config:
+    ignition:
+      version: 3.2.0
+    storage:
+      files:
+      - contents:
+          source: data:text/plain;charset=utf-8;base64,VGVzdGl...E8gKItAo= 3
+        filesystem: root
+        mode: 0644
+        path: /etc/systemd/journald.conf</code></pre>
+<figure class="table">
+  <table style="background-color:rgb(255, 255, 255);">
+    <tbody>
+      <tr>
+        <td style="padding:0px;vertical-align:top;">
+          <figure class="image image_resized" style="width:22px;"><img src="https://rol.redhat.com/rol/static/roc/Common_Content/images/1.svg" alt="1"></figure>
+        </td>
+        <td style="padding:0px;vertical-align:top;">The label for the MC. The MC uses the <code>machineconfiguration.openshift.io/role</code> MC role label. By default, OpenShift comes with preinstalled MCs for control plane and compute nodes.</td>
+      </tr>
+      <tr>
+        <td style="padding:0px;vertical-align:top;">
+          <figure class="image image_resized" style="width:22px;"><img src="https://rol.redhat.com/rol/static/roc/Common_Content/images/2.svg" alt="2"></figure>
+        </td>
+        <td style="padding:0px;vertical-align:top;">Prefix the name with a two-digit number that specifies when to apply the configuration, relative to MCs that belong to the same MCP. Higher numbers have precedence.</td>
+      </tr>
+      <tr>
+        <td style="padding:0px;vertical-align:top;">
+          <figure class="image image_resized" style="width:22px;"><img src="https://rol.redhat.com/rol/static/roc/Common_Content/images/3.svg" alt="3"></figure>
+        </td>
+        <td style="padding:0px;vertical-align:top;">Use the data URL format to embed escaped file content. Base64 encoding is common for Ignition files.</td>
+      </tr>
+    </tbody>
+  </table>
+</figure>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
