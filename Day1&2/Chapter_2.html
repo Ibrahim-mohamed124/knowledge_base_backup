@@ -2,7 +2,7 @@
 title: Backup, Restore, and Migration.
 description: 
 published: true
-date: 2025-11-07T18:24:58.564Z
+date: 2025-11-09T08:35:36.420Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-07T08:07:57.224Z
@@ -656,7 +656,11 @@ Optional CA bundle in Base64 format to verify TLS connections to the storage pro
 [myProfile] 
 aws_access_key_id=AWS_ACCESS_KEY_ID
 aws_secret_access_key=AWS_SECRET_ACCESS_KEY</code></pre>
-<p>&nbsp;</p>
+<ul>
+  <li>To get the Ca.crt of the s3 host&nbsp;</li>
+</ul>
+<pre><code class="language-plaintext"> oc get cm/openshift-service-ca.crt \
+  -o jsonpath='{.data.service-ca\.crt}' | base64 -w0; echo</code></pre>
 <pre><code class="language-plaintext">oc create secret generic cloud-credentials \
   --from-file cloud=credentials-velero</code></pre>
 <p>&nbsp;</p>
@@ -701,7 +705,7 @@ aws_secret_access_key=AWS_SECRET_ACCESS_KEY</code></pre>
 <p>&nbsp;</p>
 <h2>Backup and Restore with OADP</h2>
 <ul>
-  <li>Backup and restore are initiated by creating the corresponding Kubernetes resources in the <code>openshift-adp</code> namespace.&nbsp;</li>
+  <li>Backup and restore are initiated by creating the corresponding Kubernetes resources in the <code>openshift-adp</code> namespace.</li>
   <li>Administrative access to the <code>openshift-adp</code> namespace, or to the <code>cluster-admin</code> role, is required to create those resources.</li>
   <li><strong>Backup: </strong>This resource defines the namespaces and resources to include in the backup, and can also include a list of commands to run before or after the backup.<ul>
       <li>The<mark class="marker-yellow"> backup resource definition </mark>and the backup information, such as <mark class="marker-yellow">backup logs and the list of included backup resources</mark>, are<mark class="marker-yellow"> stored in the object storage with the backup.</mark></li>
@@ -876,6 +880,7 @@ Status of the backup.
 The backup progress, with the number of backed up items so far and the total items to back up.
 5. 
 Backup start time.</code></pre>
+<p>&nbsp;</p>
 <ul>
   <li>The backup resource can have the following statuses during its lifetime:<ol>
       <li><strong>New</strong>
@@ -985,8 +990,8 @@ Restore start time.</code></pre>
   <p><code>Completed</code></p>
 </blockquote>
 <ul>
-  <li>During the restore, OADP adds two labels to the imported resources: A <code>velero.io/restore-name</code> label with the restore name, and a <code>velero.io/backup-name</code> with the backup name that the resource came from.&nbsp;</li>
-  <li>OADP stores in the object storage detailed information about each backup and restore attempt, such as logs, the list of resources that are backed up or restored, and a summary of the errors or warnings that occur during the backup and restore process.&nbsp;</li>
+  <li>During the restore, OADP adds two labels to the imported resources: A <code>velero.io/restore-name</code> label with the restore name, and a <code>velero.io/backup-name</code> with the backup name that the resource came from.</li>
+  <li>OADP stores in the object storage detailed information about each backup and restore attempt, such as logs, the list of resources that are backed up or restored, and a summary of the errors or warnings that occur during the backup and restore process.</li>
 </ul>
 <pre><code class="language-plaintext">s3
 ├── docker 1
@@ -1030,11 +1035,13 @@ resource in the cluster.</code></pre>
 </ul>
 <pre><code class="language-plaintext">alias velero='\
   oc -n openshift-adp exec deployment/velero -c velero -it -- ./velero'</code></pre>
+<p>&nbsp;</p>
 <ul>
   <li>The <code>velero</code> command can use the same syntax as the <code>kubectl</code> or <code>oc</code> commands, but is limited to OADP Kubernetes custom resources such as the <code>backup</code>, <code>restore</code>, and <code>schedule</code> resources.</li>
 </ul>
 <pre><code class="language-plaintext">velero get resource
 velero describe resource/name --details</code></pre>
+<p>&nbsp;</p>
 <pre><code class="language-plaintext">[user@host ~]$ velero describe backup website --details
 Name:         website
 Namespace:    openshift-adp
@@ -1080,6 +1087,7 @@ Velero-Native Snapshots: &lt;none included&gt;</code></pre>
 <p>&nbsp;</p>
 <pre><code class="language-plaintext"> velero create restore website-dev \
   --from-backup=website-label --namespace-mappings=website:website-dev</code></pre>
+<p>&nbsp;</p>
 <blockquote>
   <p>Avoid including resources that other resources manage, such as builds, endpoints, or replica sets. It is unnecessary and can cause issues during the restore. You must filter to include in the backup only those resources that your application requires for a successful deployment.</p>
 </blockquote>
@@ -1276,12 +1284,14 @@ You can disable the schedule by setting the paused parameter to true.
 Sets the backup definition template by using the same settings as in a backup resource.</code></pre>
 <p>&nbsp;</p>
 <pre><code class="language-plaintext">velero get schedule</code></pre>
+<p>&nbsp;</p>
 <ul>
   <li>The status of an activated schedule is <code>Enabled</code>. If the schedule is disabled with the <code>paused</code> parameter, then its status is <code>New</code>. The <code>LAST BACKUP</code> column shows the time of the latest backup that the schedule created.</li>
   <li>To back up an application on demand, you can create a disabled schedule as a backup template. You can then start a new backup with this schedule when you need it.</li>
 </ul>
 <pre><code class="language-plaintext">velero create backup pre-upgrade-1.1 \
   --from-schedule website-daily</code></pre>
+<p>&nbsp;</p>
 <ul>
   <li>Backup resources that are created from a schedule inherit the schedule's labels. In addition, the <code>velero.io/schedule-name</code> label is set on the backup resources with the schedule name.</li>
 </ul>
@@ -1291,6 +1301,7 @@ Sets the backup definition template by using the same settings as in a backup re
   <li>Use the <code>velero</code> command to delete backup and restore information from the object storage, and all the associated resources from the cluster:</li>
 </ul>
 <pre><code class="language-plaintext"> velero delete backup backup-name</code></pre>
+<p>&nbsp;</p>
 <ul>
   <li>The backup status changes to <code>Deleting</code>, and OADP removes all restore resources that are attached to this backup from both the OpenShift cluster and the object storage. Then the backup itself is removed from the cluster and the object storage.</li>
   <li>By default, OADP deletes backups after 30 days. The minimum lifetime of a backup is 1 hour.</li>
@@ -1363,7 +1374,7 @@ spec:
   defaultVolumesToFsBackup: true</code></pre>
 <p>&nbsp;</p>
 <ul>
-  <li>annotate the application pod t<mark class="marker-yellow">o specify which volumes to back up with FSB</mark> by using the <code>backup.velero.io/backup-volumes</code> annotation.&nbsp;<ul>
+  <li>annotate the application pod t<mark class="marker-yellow">o specify which volumes to back up with FSB</mark> by using the <code>backup.velero.io/backup-volumes</code> annotation.<ul>
       <li>OADP backs up the volumes in the annotation with FSB, and all other volumes with snapshots.</li>
     </ul>
   </li>
