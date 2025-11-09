@@ -1,0 +1,50 @@
+<!--
+title: Chapter 3.  Cluster Partitioning
+description: 
+published: true
+date: 2025-11-09T10:57:53.457Z
+tags: 
+editor: ckeditor
+dateCreated: 2025-11-09T10:57:53.457Z
+-->
+
+<h3>Node Pools</h3>
+<ul>
+  <li>A node pool is <mark class="marker-yellow">a logical group of OpenShift compute nodes.</mark> Compute nodes with similar hardware configurations can be organized into a node pool. Collecting these similar nodes into node pools provides a method of targeting placement for workload deployments.</li>
+</ul>
+<figure class="image image_resized" style="width:100%;"><img src="/openshift-nodes-pool.svg"></figure>
+<h4>Node Provisioning</h4>
+<ul>
+  <li>a user-provisioned infrastructure (UPI):<ul>
+      <li><mark class="marker-yellow">Update the compute node Ignition file with an updated TLS certificate.</mark></li>
+      <li>Install Red&nbsp;Hat Enterprise Linux CoreOS (RHCOS) from an ISO image or by using a Preboot eXecution Environment (PXE) boot approach.</li>
+      <li>Add the new instance to the ingress load balancer.</li>
+      <li>Approve the Certificate Signing Requests (CSRs).</li>
+    </ul>
+  </li>
+</ul>
+<h4>Node Labels</h4>
+<ul>
+  <li>Use node labels to configure compute nodes to be a member of a specific node pool.&nbsp;</li>
+</ul>
+<pre><code class="language-plaintext"> oc label node/worker01 node-pool=gpu</code></pre>
+<h4>Node Configuration</h4>
+<ul>
+  <li>manage nodes by defining groups of these nodes, which are called <i>machine configuration pools (MCP)</i>. The MCO uses the <code>master</code> and <code>worker</code> MCPs, by default. You can create custom MCPs for node pools. MCPs use labels to match one or more MCs to one or more nodes.</li>
+</ul>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
