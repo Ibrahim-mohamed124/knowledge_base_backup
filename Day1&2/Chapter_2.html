@@ -2,7 +2,7 @@
 title: Backup, Restore, and Migration.
 description: 
 published: true
-date: 2025-11-09T08:35:36.420Z
+date: 2025-11-09T08:36:03.481Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-07T08:07:57.224Z
@@ -657,7 +657,7 @@ Optional CA bundle in Base64 format to verify TLS connections to the storage pro
 aws_access_key_id=AWS_ACCESS_KEY_ID
 aws_secret_access_key=AWS_SECRET_ACCESS_KEY</code></pre>
 <ul>
-  <li>To get the Ca.crt of the s3 host&nbsp;</li>
+  <li>To get the Ca.crt of the <code>s3.openshift-storage.svc</code>host&nbsp;</li>
 </ul>
 <pre><code class="language-plaintext"> oc get cm/openshift-service-ca.crt \
   -o jsonpath='{.data.service-ca\.crt}' | base64 -w0; echo</code></pre>
