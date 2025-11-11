@@ -2,7 +2,7 @@
 title: Deployment_Options
 description: 
 published: true
-date: 2025-11-11T16:19:50.016Z
+date: 2025-11-11T16:26:10.383Z
 tags: ocp, portworx, storage, day 2
 editor: ckeditor
 dateCreated: 2025-11-11T15:58:12.172Z
@@ -44,8 +44,20 @@ dateCreated: 2025-11-11T15:58:12.172Z
 </ul>
 <figure class="image"><img src="/deployment-architectures-dedicated-portworx-storage-cluster-48c7f75f5e461c9b12cd92d93a9555aa.png"></figure>
 <p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
+<h3><strong>Hyperconverged Portworx storage cluster</strong></h3>
+<ul>
+  <li>Suitable for deployments with fault domains</li>
+  <li>Benefits:<ol>
+      <li>High performance applicatons</li>
+    </ol>
+  </li>
+  <li>constraints:<ol>
+      <li>Harder to scale the cluster nodes because scaling the cluster means adding more storage</li>
+      <li>Harder to reduce the computing power do to possible data loss</li>
+    </ol>
+  </li>
+</ul>
+<figure class="image"><img src="/deployment-architectures-hyperconverged-portworx-storage-cluster-4a2137667ae6b801e68cc742fbe64ac7.png"></figure>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
