@@ -2,7 +2,7 @@
 title: Stateful application storage operations
 description: 
 published: true
-date: 2025-11-11T18:51:22.773Z
+date: 2025-11-11T18:52:57.175Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-11T17:16:59.056Z
@@ -22,7 +22,7 @@ dateCreated: 2025-11-11T17:16:59.056Z
     </ol>
   </li>
 </ul>
-<h2>backupLocation</h2>
+<h3>backupLocation</h3>
 <ul>
   <li>portworx supports &nbsp;these object storage providers:<ol>
       <li>S3 compatible storage</li>
@@ -142,7 +142,7 @@ location:
     </ul>
   </li>
 </ul>
-<h2><strong>applicationBackup</strong></h2>
+<h3><strong>applicationBackup</strong></h3>
 <pre><code class="language-plaintext">apiVersion: stork.libopenstorage.org/v1alpha1
 kind: ApplicationBackup
 metadata:
@@ -184,7 +184,7 @@ spec:
 <p>&nbsp;</p>
 <pre><code class="language-plaintext">storkctl get applicationbackup -n mysql-app
 oc describe applicationbackup.stork.libopenstorage.org -n mysql-app</code></pre>
-<h2><strong>ApplicationBackupSchedule</strong></h2>
+<h3><strong>ApplicationBackupSchedule</strong></h3>
 <pre><code class="language-plaintext">apiVersion: stork.libopenstorage.org/v1alpha1
 kind: SchedulePolicy
 metadata:
@@ -229,7 +229,7 @@ spec:
   <li><strong>spec.template.spec.namespaces:</strong> namespaces which will be backed up</li>
   <li><strong>spec.template.spec.reclaimPolicy:</strong> what happens to objects in the object store when the <code>ApplicationBackup</code> object is deleted</li>
 </ul>
-<h1><strong>Restore an application</strong></h1>
+<h2><strong>Restore an application</strong></h2>
 <blockquote>
   <p>If you're restoring an <mark class="marker-yellow">application across namespaces on OpenShift, you must modify your destination namespace to include the same supplemental group annotation values as your source namespace:</mark></p>
   <pre><code class="language-plaintext">annotations:  openshift.io/sa.scc.mcs: s0:c26,c25  
@@ -266,7 +266,7 @@ storkctl get applicationrestore -n mysql-app</code></pre>
   </li>
 </ul>
 <pre><code class="language-plaintext">oc get ApplicationBackup &lt;Backup-Which-need-to-be-Restored&gt; -oyaml &gt; backup-completed.yaml</code></pre>
-<h1><strong>Clone an Application</strong></h1>
+<h2><strong>Clone an Application</strong></h2>
 <blockquote>
   <p>If you're cloning an application across namespaces on OpenShift, you must modify your destination namespace to include the same supplemental group annotation values as your source namespace:</p>
 </blockquote>
@@ -292,7 +292,7 @@ spec:
   <li><strong>spec.destinationNamespace:</strong> the<mark class="marker-yellow"> namespace you want to clone applications </mark><i><mark class="marker-yellow">to</mark></i></li>
 </ul>
 <p>&nbsp;</p>
-<p>&nbsp;</p>
+<h2><strong>ApplicationRegistration</strong></h2>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
