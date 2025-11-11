@@ -2,7 +2,7 @@
 title: Stateful application storage operations
 description: 
 published: true
-date: 2025-11-11T18:48:22.181Z
+date: 2025-11-11T18:51:22.773Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-11T17:16:59.056Z
@@ -267,4 +267,36 @@ storkctl get applicationrestore -n mysql-app</code></pre>
 </ul>
 <pre><code class="language-plaintext">oc get ApplicationBackup &lt;Backup-Which-need-to-be-Restored&gt; -oyaml &gt; backup-completed.yaml</code></pre>
 <h1><strong>Clone an Application</strong></h1>
+<blockquote>
+  <p>If you're cloning an application across namespaces on OpenShift, you must modify your destination namespace to include the same supplemental group annotation values as your source namespace:</p>
+</blockquote>
+<pre><code class="language-plaintext">annotations:  openshift.io/sa.scc.mcs: s0:c26,c25
+              openshift.io/sa.scc.supplemental-groups: 1001990000/10000
+              openshift.io/sa.scc.uid-range: 1001990000/10000</code></pre>
+<p>&nbsp;</p>
+<blockquote>
+  <p>Distributed apps, such as Cassandra, may use the same node IDs on the destination namespace as their source, causing disruption when the new nodes join the source cluster.</p>
+</blockquote>
+<pre><code class="language-plaintext">apiVersion: stork.libopenstorage.org/v1alpha1
+kind: ApplicationClone
+metadata:
+  name: clone-mysql
+  namespace: kube-system
+spec:
+  sourceNamespace: mysql-app
+  destinationNamespace: clone-mysql</code></pre>
+<ul>
+  <li><strong>name:</strong> the ApplicationClone object's name</li>
+  <li><strong>namespace:</strong> the ApplicationClone object's namespace</li>
+  <li><strong>spec.sourceNamespace:</strong> the <mark class="marker-yellow">namespace you want to clone applications </mark><i><mark class="marker-yellow">from</mark></i></li>
+  <li><strong>spec.destinationNamespace:</strong> the<mark class="marker-yellow"> namespace you want to clone applications </mark><i><mark class="marker-yellow">to</mark></i></li>
+</ul>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
 <p>&nbsp;</p>
