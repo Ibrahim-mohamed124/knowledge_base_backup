@@ -2,7 +2,7 @@
 title: Stateful application storage operations
 description: 
 published: true
-date: 2025-11-11T17:45:17.572Z
+date: 2025-11-11T17:50:09.702Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-11T17:16:59.056Z
@@ -89,4 +89,32 @@ location:
   <p>If you use URL as your bucket endpoint, you must include the http prefix: either <code>https://</code> or <code>http://</code>, depending on whether or not you're using SSL.</p>
 </blockquote>
 <h4><strong>Kubernetes secret containing your credentials</strong></h4>
-<p>&nbsp;</p>
+<pre><code class="language-plaintext">  apiVersion: v1
+  kind: Secret
+  metadata:
+    name: s3secret
+    namespace: mysql
+    annotations:
+      stork.libopenstorage.org/skipresource: "true" &gt; Annotate the Kubernetes secret so that other 
+      components like Stork and PX-Backup do not backup this resource.
+  stringData:
+    region: us-east-1
+    accessKeyID: &lt;access-key&gt;
+    secretAccessKey: &lt;secret-key&gt;
+    endpoint: "X.X.X.141:9010"
+    disableSSL: "false"
+    encryptionKey: "testKey"</code></pre>
+<ul>
+  <li><strong>name:</strong> the Secret object's name</li>
+  <li><strong>namespace:</strong> the <mark class="marker-yellow">namespace the Secret exists in</mark></li>
+  <li><strong>stringData:</strong>
+    <ul>
+      <li><strong>region:</strong> which region your s3 bucket is located in</li>
+      <li><strong>accessKeyID:</strong> your bucket's accessKeyID</li>
+      <li><strong>secretAccessKey:</strong> your bucket's secretAccessKey</li>
+      <li><strong>endpoint:</strong> the URL or IP address of your bucket</li>
+      <li><strong>disableSSL:</strong> whether or not to disable SSL</li>
+      <li><strong>encryptionKey:</strong> your secret's encryption key</li>
+    </ul>
+  </li>
+</ul>
