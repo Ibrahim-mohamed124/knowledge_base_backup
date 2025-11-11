@@ -2,7 +2,7 @@
 title: Stateful application storage operations
 description: 
 published: true
-date: 2025-11-11T18:52:57.175Z
+date: 2025-11-11T19:01:37.784Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-11T17:16:59.056Z
@@ -293,10 +293,49 @@ spec:
 </ul>
 <p>&nbsp;</p>
 <h2><strong>ApplicationRegistration</strong></h2>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
+<ul>
+  <li>Back up and restore customer-specific CRDs by registering them to stork version 2.4.3</li>
+  <li>By default, Stork supports a number of customer-specific CRDs.</li>
+</ul>
+<pre><code class="language-plaintext">storkctl get applicationregistrations</code></pre>
+<h3><strong>Register a new CRD with Stork</strong></h3>
+<pre><code class="language-plaintext">apiVersion: stork.libopenstorage.org/v1alpha1
+kind: ApplicationRegistration
+metadata:
+  name: myappname
+resources:
+- PodsPath: &lt;POD_PATH&gt; 
+  group: &lt;CRD_GROUP_NAME&gt;
+  version: &lt;CRD_VERSION&gt;
+  kind: &lt;CR_KIND&gt;
+  keepStatus: false
+  # To disable CR on migration, 
+  # CR spec path for disable 
+  suspendOptions:
+    path: &lt;spec_path&gt;
+    type: &lt;type_of_value_to_set&gt; (can be "int"/"bool")</code></pre>
+<ul>
+  <li><strong>metadata.name:</strong> With the name of the spec.</li>
+  <li><strong>resources.PodsPath:</strong> (Optional) With <mark class="marker-yellow">The path which stores the pods created by the CR</mark>. These will be deleted when scaling down the migration.</li>
+  <li><strong>resources.group:</strong> With the <mark class="marker-yellow">group of the CRD being registered.</mark></li>
+  <li><strong>resources.version:</strong> With the <mark class="marker-yellow">version of the CRD being registered.</mark></li>
+  <li><strong>resources.kind:</strong> With the <mark class="marker-yellow">kind of the CRD being registered.</mark></li>
+  <li><strong>resources.keepStatus:</strong> (Optional)<mark class="marker-yellow"> If you don't want to save the resource's status after migration</mark>, set this value to <code>false</code>.</li>
+  <li><strong>resources.suspendOptions.path:</strong> (Optional) With the path in the CRD spec which contains the option to suspend the application.</li>
+  <li><strong>resources.suspendOptions.type:</strong> (Optional) With the type of the field that is used to suspend the operation. For example, <code>int</code>, if the field contains the replica count for the application.</li>
+</ul>
+<p>example:</p>
+<pre><code class="language-plaintext">apiVersion: stork.libopenstorage.org/v1alpha1
+kind: ApplicationRegistration
+metadata:
+  name: cassandra
+resources:
+- PodsPath: ""
+  group: cassandra.datastax.com
+  version: v1beta1
+  kind: CassandraDatacenter
+  keepStatus: false #cassandra datacenter status will not be migrated
+  suspendOptions:
+    path: spec.stopped #path to disable cassandra datacenter
+    type: bool #type of value to be set for spec.stopped</code></pre>
+<h3><strong>Managing application migrations with Stork</strong></h3>
