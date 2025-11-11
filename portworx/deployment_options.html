@@ -2,7 +2,7 @@
 title: Deployment_Options
 description: 
 published: true
-date: 2025-11-11T16:41:08.665Z
+date: 2025-11-11T16:42:14.444Z
 tags: ocp, portworx, storage, day 2
 editor: ckeditor
 dateCreated: 2025-11-11T15:58:12.172Z
@@ -10,7 +10,7 @@ dateCreated: 2025-11-11T15:58:12.172Z
 
 <h1>Portworx Deployment Architectures</h1>
 <ol>
-  <li>Single datacenter&nbsp;<ol>
+  <li>Single datacenter<ol>
       <li>Dedicated portworx storage cluster</li>
       <li>Hyperconverged portworx storage cluster</li>
     </ol>
@@ -25,7 +25,7 @@ dateCreated: 2025-11-11T15:58:12.172Z
 <h2><strong>Single data center/multiple AZ Portworx deployment options</strong></h2>
 <h3><strong>Dedicated Portworx storage cluster</strong></h3>
 <ul>
-  <li>Suitable for deployments with fault domains&nbsp;</li>
+  <li>Suitable for deployments with fault domains</li>
 </ul>
 <blockquote>
   <p>A fault domain is a logical grouping of hardware that shares a common point of failure, such as a single power source or network switch. By distributing resources across multiple fault domains, systems can tolerate a single component or a localized failure (like a server rack) without a complete loss of service.&nbsp;</p>
@@ -88,7 +88,7 @@ dateCreated: 2025-11-11T15:58:12.172Z
     </ol>
   </li>
   <li>Constrains:<ol>
-      <li><mark class="marker-yellow">S3-compatible object store </mark>is available to move data.&nbsp;</li>
+      <li><mark class="marker-yellow">S3-compatible object store </mark>is available to move data.</li>
     </ol>
   </li>
 </ul>
@@ -98,41 +98,41 @@ dateCreated: 2025-11-11T15:58:12.172Z
   <table style="background-color:rgb(27, 27, 29);">
     <thead>
       <tr>
-        <th style="background-color:rgba(0, 0, 0, 0);border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;"><strong>Application and infrastructure requirements</strong></th>
-        <th style="background-color:rgba(0, 0, 0, 0);border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;"><strong>Synchronous PX-DR</strong></th>
-        <th style="background-color:rgba(0, 0, 0, 0);border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;"><strong>Asynchronous PD-DR</strong></th>
+        <th style="background-color:hsl(0, 0%, 100%);border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;">Application and infrastructure requirements</th>
+        <th style="background-color:hsl(0, 0%, 100%);border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;">Synchronous PX-DR</th>
+        <th style="background-color:hsl(0, 0%, 100%);border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;">Asynchronous PD-DR</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td style="border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;">Number of Portworx clusters</td>
-        <td style="border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;">1</td>
-        <td style="border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;">2</td>
+        <td style="background-color:hsl(0, 0%, 100%);border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;">Number of Portworx clusters</td>
+        <td style="background-color:hsl(0, 0%, 100%);border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;">1</td>
+        <td style="background-color:hsl(0, 0%, 100%);border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;">2</td>
       </tr>
       <tr>
-        <td style="border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;">Needs an S3-compatible object store to move data</td>
-        <td style="border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;">No</td>
-        <td style="border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;">Yes</td>
+        <td style="background-color:hsl(0, 0%, 100%);border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;">Needs an S3-compatible object store to move data</td>
+        <td style="background-color:hsl(0, 0%, 100%);border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;">No</td>
+        <td style="background-color:hsl(0, 0%, 100%);border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;">Yes</td>
       </tr>
       <tr>
-        <td style="border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;">Max round trip latency between data centers</td>
-        <td style="border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;">10 ms</td>
-        <td style="border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;">No limit</td>
+        <td style="background-color:hsl(0, 0%, 100%);border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;">Max round trip latency between data centers</td>
+        <td style="background-color:hsl(0, 0%, 100%);border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;">10 ms</td>
+        <td style="background-color:hsl(0, 0%, 100%);border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;">No limit</td>
       </tr>
       <tr>
-        <td style="border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;">Data guaranteed to be available at both sites (zero RPO)</td>
-        <td style="border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;">Yes</td>
-        <td style="border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;">No</td>
+        <td style="background-color:hsl(0, 0%, 100%);border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;">Data guaranteed to be available at both sites (zero RPO)</td>
+        <td style="background-color:hsl(0, 0%, 100%);border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;">Yes</td>
+        <td style="background-color:hsl(0, 0%, 100%);border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;">No</td>
       </tr>
       <tr>
-        <td style="border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;">Kubernetes objects replicated between data centers</td>
-        <td style="border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;">Yes</td>
-        <td style="border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;">Yes</td>
+        <td style="background-color:hsl(0, 0%, 100%);border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;">Kubernetes objects replicated between data centers</td>
+        <td style="background-color:hsl(0, 0%, 100%);border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;">Yes</td>
+        <td style="background-color:hsl(0, 0%, 100%);border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;">Yes</td>
       </tr>
       <tr>
-        <td style="border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;">Low RTO</td>
-        <td style="border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;">Yes</td>
-        <td style="border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;">Yes</td>
+        <td style="background-color:hsl(0, 0%, 100%);border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;">Low RTO</td>
+        <td style="background-color:hsl(0, 0%, 100%);border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;">Yes</td>
+        <td style="background-color:hsl(0, 0%, 100%);border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;">Yes</td>
       </tr>
     </tbody>
   </table>
