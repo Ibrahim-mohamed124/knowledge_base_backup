@@ -2,7 +2,7 @@
 title: Stateful application storage operations
 description: 
 published: true
-date: 2025-11-11T18:26:08.102Z
+date: 2025-11-11T18:28:48.293Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-11T17:16:59.056Z
@@ -185,4 +185,52 @@ spec:
 <pre><code class="language-plaintext">storkctl get applicationbackup -n mysql-app
 oc describe applicationbackup.stork.libopenstorage.org -n mysql-app</code></pre>
 <h2><strong>ApplicationBackupSchedule</strong></h2>
+<pre><code class="language-plaintext">apiVersion: stork.libopenstorage.org/v1alpha1
+kind: SchedulePolicy
+metadata:
+  name: backupSchedule
+policy:
+  interval:
+    intervalMinutes: 60
+    retain: 5
+  daily:
+    time: "10:14PM"
+    retain: 5
+  weekly:
+    day: "Thursday"
+    time: "10:13PM"
+    retain: 5
+  monthly:
+    date: 14
+    time: "8:05PM"
+    retain: 5</code></pre>
 <p>&nbsp;</p>
+<pre><code class="language-plaintext">storkctl get schedulepolicy</code></pre>
+<p>&nbsp;</p>
+<pre><code class="language-plaintext">apiVersion: stork.libopenstorage.org/v1alpha1
+kind: ApplicationBackupSchedule
+metadata:
+  name: backup
+  namespace: mysql
+spec:
+  schedulePolicyName: testpolicy
+  template:
+    spec:
+      backupLocation: mysql
+      namespaces:
+      - mysql
+      reclaimPolicy: Delete</code></pre>
+<p>&nbsp;</p>
+<ul>
+  <li><strong>name:</strong> the applicationBackupSchedule object's name</li>
+  <li><strong>namespace:</strong> the namespace the applicationBackupSchedule exists in</li>
+  <li><strong>spec.schedulePolicyName:</strong> the <mark class="marker-yellow">name of the schedule policy that defines when backup actions happen</mark></li>
+  <li><strong>spec.template.spec.backupLocation:</strong> the name of the <mark class="marker-yellow">backup location spec</mark></li>
+  <li><strong>spec.template.spec.namespaces:</strong> namespaces which will be backed up</li>
+  <li><strong>spec.template.spec.reclaimPolicy:</strong> what happens to objects in the object store when the <code>ApplicationBackup</code> object is deleted</li>
+</ul>
+<h1><strong>Restore an application</strong></h1>
+<p>&nbsp;</p>
+<ul>
+  <li>&nbsp;</li>
+</ul>
