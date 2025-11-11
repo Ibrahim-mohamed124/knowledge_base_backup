@@ -2,7 +2,7 @@
 title: Chapter 3.  Cluster Partitioning
 description: 
 published: true
-date: 2025-11-09T13:42:11.698Z
+date: 2025-11-11T10:15:14.698Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-09T10:57:53.457Z
@@ -51,7 +51,7 @@ dateCreated: 2025-11-09T10:57:53.457Z
           <li>The machine configuration server (MCS)<mark class="marker-yellow"> provides instance customizations to machines that join the cluster.</mark> The MCS uses Ignition to provide the instance customizations to cluster nodes that join the cluster. <mark class="marker-yellow">The RHCOS operating system downloads and processes Ignition files at boot time.</mark></li>
         </ul>
       </li>
-      <li>&nbsp;MCO also requires the<mark class="marker-yellow"> machine-config-daemon daemonset</mark> that RHCOS provides.</li>
+      <li>MCO also requires the<mark class="marker-yellow"> machine-config-daemon daemonset</mark> that RHCOS provides.</li>
     </ul>
   </li>
   <li>The MCO can manage the following resources:<ul>
@@ -65,7 +65,8 @@ dateCreated: 2025-11-09T10:57:53.457Z
   <li>The MCO defines two custom resources (CRs), which are part of the <code>machineconfiguration.openshift.io/v1</code> API group.</li>
 </ul>
 <ol>
-  <li><code><strong>MachineConfig:</strong></code>&nbsp;<ul>
+  <li><code><strong>MachineConfig:</strong></code>
+    <ul>
       <li>A machine configuration (MC) CR declares instance customizations by using the <mark class="marker-yellow">Ignition configuration format.</mark></li>
     </ul>
   </li>
@@ -82,7 +83,7 @@ dateCreated: 2025-11-09T10:57:53.457Z
 <p>&nbsp;</p>
 <h3>Machine Configurations</h3>
 <ul>
-  <li>Ignition files encode file contents by using the Base64 encoding scheme.&nbsp;</li>
+  <li>Ignition files encode file contents by using the Base64 encoding scheme.</li>
 </ul>
 <pre><code class="language-plaintext">apiVersion: machineconfiguration.openshift.io/v1
 kind: MachineConfig
@@ -101,6 +102,7 @@ spec:
         filesystem: root
         mode: 0644
         path: /etc/systemd/journald.conf</code></pre>
+<p>&nbsp;</p>
 <figure class="table">
   <table style="background-color:rgb(255, 255, 255);">
     <tbody>
@@ -114,13 +116,13 @@ spec:
         <td style="padding:0px;vertical-align:top;">
           <figure class="image image_resized" style="width:22px;"><img src="https://rol.redhat.com/rol/static/roc/Common_Content/images/2.svg" alt="2"></figure>
         </td>
-        <td style="padding:0px;vertical-align:top;">Prefix the name with a two-digit number that specifies when to apply the configuration, relative to MCs that belong to the same MCP. Higher numbers have precedence.</td>
+        <td style="padding:0px;vertical-align:top;"><mark class="marker-yellow">Prefix the name with a two-digit number that specifies when to apply the configuration, relative to MCs that belong to the same MCP. Higher numbers have precedence.</mark></td>
       </tr>
       <tr>
         <td style="padding:0px;vertical-align:top;">
           <figure class="image image_resized" style="width:22px;"><img src="https://rol.redhat.com/rol/static/roc/Common_Content/images/3.svg" alt="3"></figure>
         </td>
-        <td style="padding:0px;vertical-align:top;">Use the data URL format to embed escaped file content. Base64 encoding is common for Ignition files.</td>
+        <td style="padding:0px;vertical-align:top;">Use the <mark class="marker-yellow">data URL format to embed escaped file content.</mark> Base64 encoding is common for Ignition files.</td>
       </tr>
     </tbody>
   </table>
