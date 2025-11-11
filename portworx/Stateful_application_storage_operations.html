@@ -2,7 +2,7 @@
 title: Stateful application storage operations
 description: 
 published: true
-date: 2025-11-11T17:55:22.430Z
+date: 2025-11-11T18:23:52.908Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-11T17:16:59.056Z
@@ -142,4 +142,46 @@ location:
     </ul>
   </li>
 </ul>
+<h2><strong>applicationBackup</strong></h2>
+<pre><code class="language-plaintext">apiVersion: stork.libopenstorage.org/v1alpha1
+kind: ApplicationBackup
+metadata:
+  name: backup
+  namespace: mysql-app
+spec:
+  backupLocation: mysql
+  namespaces:
+  - mysql-app
+  reclaimPolicy: Delete
+  selectors:
+  preExecRule:
+  postExecRule:</code></pre>
+<p>&nbsp;</p>
+<ul>
+  <li><strong>name:</strong> the applicationBackup object's name</li>
+  <li><strong>namespace:</strong><mark class="marker-yellow"> the namespace the applicationBackup exists in</mark></li>
+  <li><strong>spec:</strong>
+    <ul>
+      <li><strong>backupLocation:</strong> what <mark class="marker-yellow">backupLocation object to use to determine where to send the backup</mark></li>
+      <li><strong>namespaces:</strong> the <mark class="marker-yellow">namespaces to backup</mark></li>
+      <li><strong>reclaimPolicy:</strong> <mark class="marker-yellow">what happens to objects in the object store when the </mark><code><mark class="marker-yellow">ApplicationBackup</mark></code><mark class="marker-yellow"> object is deleted</mark>, either <code>Delete</code> or <code>Retain</code></li>
+      <li><strong>selectors:</strong> define <mark class="marker-yellow">specific labels to determine which objects and volumes are backed-up</mark></li>
+      <li><strong>preExecRule:</strong> what rule to run before performing backup</li>
+      <li><strong>postExecRule:</strong> what rule to run after performing backup</li>
+    </ul>
+  </li>
+</ul>
+<pre><code class="language-plaintext">apiVersion: stork.libopenstorage.org/v1alpha1
+kind: Rule
+metadata:
+  name: cassandra-presnap-rule
+spec:
+  - podSelector:
+      app: cassandra
+    actions:
+    - type: command
+      value: nodetool flush</code></pre>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
 <p>&nbsp;</p>
