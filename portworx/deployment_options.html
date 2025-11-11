@@ -2,7 +2,7 @@
 title: Deployment_Options
 description: 
 published: true
-date: 2025-11-11T16:26:10.383Z
+date: 2025-11-11T16:41:08.665Z
 tags: ocp, portworx, storage, day 2
 editor: ckeditor
 dateCreated: 2025-11-11T15:58:12.172Z
@@ -59,6 +59,84 @@ dateCreated: 2025-11-11T15:58:12.172Z
 </ul>
 <figure class="image"><img src="/deployment-architectures-hyperconverged-portworx-storage-cluster-4a2137667ae6b801e68cc742fbe64ac7.png"></figure>
 <p>&nbsp;</p>
+<h2><strong>DR and multi-data center HA architectures</strong></h2>
+<h3><strong>Synchronous DR over a MAN using multiple Kubernetes clusters with a single Portworx stretch cluster</strong></h3>
+<ul>
+  <li>Benefits:<ol>
+      <li>Namespace and resources &nbsp;granularity &nbsp;levels &nbsp;for &nbsp;DR</li>
+      <li><mark class="marker-yellow">RPO zero data protection</mark> and<mark class="marker-yellow"> low RTO in the case of losing an entire data center.</mark></li>
+    </ol>
+  </li>
+</ul>
+<blockquote>
+  <p>RTO (<a href="https://www.google.com/search?sca_esv=c019091b52478373&amp;rlz=1C1MMCH_enEG1173EG1173&amp;q=Recovery+Time+Objective&amp;sa=X&amp;sqi=2&amp;ved=2ahUKEwjZ3_3ywuqQAxX-VkEAHSJDJI0QxccNegQIDxAB&amp;mstk=AUtExfAUGI83HuWa7BJgS0HVSvz6VQxmuF_Cx1D-aNV5i6rID0XwXhwuJaMNxsmMmSbb5lGs8vN_fDt4bbXq263Q1XLHcRC8SyvKO6bgGHkaH6SRyUyTom1uIqnkNc96TD8fC22HvKVz8m5cvdeopHD-YAIUT6mtwNBf_-T8jhU3b34nT-_2dca-UyHYbmKPt9KAZbiU&amp;csui=3">Recovery Time Objective</a>) and RPO (<a href="https://www.google.com/search?sca_esv=c019091b52478373&amp;rlz=1C1MMCH_enEG1173EG1173&amp;q=Recovery+Point+Objective&amp;sa=X&amp;sqi=2&amp;ved=2ahUKEwjZ3_3ywuqQAxX-VkEAHSJDJI0QxccNegQIDxAC&amp;mstk=AUtExfAUGI83HuWa7BJgS0HVSvz6VQxmuF_Cx1D-aNV5i6rID0XwXhwuJaMNxsmMmSbb5lGs8vN_fDt4bbXq263Q1XLHcRC8SyvKO6bgGHkaH6SRyUyTom1uIqnkNc96TD8fC22HvKVz8m5cvdeopHD-YAIUT6mtwNBf_-T8jhU3b34nT-_2dca-UyHYbmKPt9KAZbiU&amp;csui=3">Recovery Point Objective</a>) are both metrics used in disaster recovery that measure different goals. RTO is the maximum tolerable downtime after a disaster, while RPO is the maximum amount of data loss that is acceptable</p>
+</blockquote>
+<p>&nbsp; &nbsp; 3.<mark class="marker-yellow"> Data and Kubernetes objects</mark> are replicated across both sites, simplifying and speeding up application failover</p>
+<ul>
+  <li>constraints:<ol>
+      <li>Round trip latency between data centers must be<strong> &lt; 10 ms.</strong></li>
+    </ol>
+  </li>
+</ul>
+<figure class="image"><img src="/deployment-architectures-synchronous-disaster-recovery-over-man-mulitple-k8s-clusters-9ae9179cb1eabc1f91f01fff8ebce375.png"></figure>
+<p>&nbsp;</p>
+<h3><strong>Asynchronous DR over a WAN using multiple Kubernetes clusters with multiple Portworx clusters</strong></h3>
+<ul>
+  <li>Benefits:<ol>
+      <li>Namespace and resources &nbsp;granularity &nbsp;levels &nbsp;for &nbsp;DR</li>
+      <li>RPO levels are as low as <mark class="marker-yellow">15 minutes</mark> and RTO under <mark class="marker-yellow">one minute</mark> in the case of losing an entire data center.</li>
+    </ol>
+  </li>
+  <li>Constrains:<ol>
+      <li><mark class="marker-yellow">S3-compatible object store </mark>is available to move data.&nbsp;</li>
+    </ol>
+  </li>
+</ul>
+<figure class="image"><img src="/deployment-architectures-asynch-dr-over-wan-multiple-k8s-clusters-multiple-portworx-clusters-ed84f8484bea292a88f597d0c1e81838.png"></figure>
+<p>&nbsp;</p>
+<figure class="table">
+  <table style="background-color:rgb(27, 27, 29);">
+    <thead>
+      <tr>
+        <th style="background-color:rgba(0, 0, 0, 0);border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;"><strong>Application and infrastructure requirements</strong></th>
+        <th style="background-color:rgba(0, 0, 0, 0);border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;"><strong>Synchronous PX-DR</strong></th>
+        <th style="background-color:rgba(0, 0, 0, 0);border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;"><strong>Asynchronous PD-DR</strong></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;">Number of Portworx clusters</td>
+        <td style="border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;">1</td>
+        <td style="border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;">2</td>
+      </tr>
+      <tr>
+        <td style="border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;">Needs an S3-compatible object store to move data</td>
+        <td style="border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;">No</td>
+        <td style="border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;">Yes</td>
+      </tr>
+      <tr>
+        <td style="border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;">Max round trip latency between data centers</td>
+        <td style="border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;">10 ms</td>
+        <td style="border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;">No limit</td>
+      </tr>
+      <tr>
+        <td style="border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;">Data guaranteed to be available at both sites (zero RPO)</td>
+        <td style="border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;">Yes</td>
+        <td style="border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;">No</td>
+      </tr>
+      <tr>
+        <td style="border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;">Kubernetes objects replicated between data centers</td>
+        <td style="border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;">Yes</td>
+        <td style="border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;">Yes</td>
+      </tr>
+      <tr>
+        <td style="border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;">Low RTO</td>
+        <td style="border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;">Yes</td>
+        <td style="border-bottom:0.8px solid rgb(96, 103, 112);border-left:0.8px solid rgb(96, 103, 112);border-right:0.8px solid rgb(96, 103, 112);border-top:0.8px solid rgb(96, 103, 112);padding:12px;text-align:center;">Yes</td>
+      </tr>
+    </tbody>
+  </table>
+</figure>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
