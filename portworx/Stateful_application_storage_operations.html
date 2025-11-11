@@ -2,7 +2,7 @@
 title: Stateful application storage operations
 description: 
 published: true
-date: 2025-11-11T19:01:37.784Z
+date: 2025-11-11T19:11:57.397Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-11T17:16:59.056Z
@@ -339,3 +339,24 @@ resources:
     path: spec.stopped #path to disable cassandra datacenter
     type: bool #type of value to be set for spec.stopped</code></pre>
 <h3><strong>Managing application migrations with Stork</strong></h3>
+<ul>
+  <li>Migration of applications controlled by operators in Stork can be conducted with either <mark class="marker-yellow">asynchronous or synchronous DR methods.</mark></li>
+  <li><code>startApplications</code> parameter is set to <code>false</code> for migrations, it is expected that the application pods will not be running in the destination cluster once the migration is completed.&nbsp;</li>
+  <li>For DR scenarios, the <code>startApplications</code> flag is by default set to <code>false</code> since the applications need to be in a scale down state on the destination cluster.</li>
+  <li>Stork provides support fo<mark class="marker-yellow">r modifying the CR spec to scale down these applications</mark>, utilizing the options provided by the <code>ApplicationRegistration</code>'s <code>suspendOptions</code>.</li>
+</ul>
+<h4><strong>&nbsp;Safeguarding application pods during migration with Stork's stash strategy</strong></h4>
+<ul>
+  <li>For certain applications controlled by clusterwide operators that do not support scaling down via CR spec modifications, the pods related to these applications may <mark class="marker-yellow">become active in the destination namespace after migration</mark>.</li>
+  <li>Stork offers a feature known as the "Stash Strategy". This feature<mark class="marker-yellow"> allows the CR content to be stashed in a config map during migration on the destination cluster. </mark>The actual CR spec is created on the destination cluster only when the applications failover to the destination cluster using <code>storkctl.</code></li>
+</ul>
+<blockquote>
+  <p>Do not define any suspend options for application registrations with the <code>stashStrategy</code> enabled.</p>
+</blockquote>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
