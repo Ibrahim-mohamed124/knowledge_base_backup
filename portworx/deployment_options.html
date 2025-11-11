@@ -2,10 +2,56 @@
 title: Deployment_Options
 description: 
 published: true
-date: 2025-11-11T15:59:25.759Z
+date: 2025-11-11T16:19:50.016Z
 tags: ocp, portworx, storage, day 2
 editor: ckeditor
 dateCreated: 2025-11-11T15:58:12.172Z
 -->
 
-<p>test</p>
+<h1>Portworx Deployment Architectures</h1>
+<ol>
+  <li>Single datacenter&nbsp;<ol>
+      <li>Dedicated portworx storage cluster</li>
+      <li>Hyperconverged portworx storage cluster</li>
+    </ol>
+  </li>
+  <li>Multi-site HA and DR<ol>
+      <li><mark class="marker-yellow">Synchronous DR</mark> over a MAN(metropolitan area network) using multiple Kubernetes clusters with a <mark class="marker-yellow">single Portworx stretch cluster</mark></li>
+      <li><mark class="marker-yellow">Asynchronous DR</mark> over a WAN using multiple Kubernetes clusters with <mark class="marker-yellow">multiple Portworx clusters</mark></li>
+      <li>Multi-site data center stretch cluster for HA</li>
+    </ol>
+  </li>
+</ol>
+<h2><strong>Single data center/multiple AZ Portworx deployment options</strong></h2>
+<h3><strong>Dedicated Portworx storage cluster</strong></h3>
+<ul>
+  <li>Suitable for deployments with fault domains&nbsp;</li>
+</ul>
+<blockquote>
+  <p>A fault domain is a logical grouping of hardware that shares a common point of failure, such as a single power source or network switch. By distributing resources across multiple fault domains, systems can tolerate a single component or a localized failure (like a server rack) without a complete loss of service.&nbsp;</p>
+</blockquote>
+<ul>
+  <li>Portworx volumes will be automatically placed across these fault domains to create fault tolerance.</li>
+  <li>Benefits:<ol>
+      <li>Easier scaling of compute nodes without having to scale storage with compute resources</li>
+      <li>Separation of storage and compute</li>
+    </ol>
+  </li>
+  <li>Constrains:<ol>
+      <li>Latency between compute nodes to the storage nodes will affect applications</li>
+    </ol>
+  </li>
+</ul>
+<figure class="image"><img src="/deployment-architectures-dedicated-portworx-storage-cluster-48c7f75f5e461c9b12cd92d93a9555aa.png"></figure>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
