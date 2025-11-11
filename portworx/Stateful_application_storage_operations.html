@@ -2,7 +2,7 @@
 title: Stateful application storage operations
 description: 
 published: true
-date: 2025-11-11T19:11:57.397Z
+date: 2025-11-11T19:13:46.175Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-11T17:16:59.056Z
@@ -349,11 +349,35 @@ resources:
 <ul>
   <li>For certain applications controlled by clusterwide operators that do not support scaling down via CR spec modifications, the pods related to these applications may <mark class="marker-yellow">become active in the destination namespace after migration</mark>.</li>
   <li>Stork offers a feature known as the "Stash Strategy". This feature<mark class="marker-yellow"> allows the CR content to be stashed in a config map during migration on the destination cluster. </mark>The actual CR spec is created on the destination cluster only when the applications failover to the destination cluster using <code>storkctl.</code></li>
+  <li>Modifications need to be made in<mark class="marker-yellow"> both the source and destination clusters </mark>before initiating the migration.</li>
 </ul>
 <blockquote>
   <p>Do not define any suspend options for application registrations with the <code>stashStrategy</code> enabled.</p>
 </blockquote>
-<p>&nbsp;</p>
+<p>example:</p>
+<pre><code class="language-plaintext">apiVersion: stork.libopenstorage.org/v1alpha1
+kind: ApplicationRegistration
+metadata:
+  name: elasticsearch
+resources:
+- group: elasticsearch.k8s.elastic.co
+  keepStatus: false
+  kind: Elasticsearch
+  stashStrategy:
+    stashCR: true
+  version: v1
+- group: elasticsearch.k8s.elastic.co
+  keepStatus: false
+  kind: Elasticsearch
+  stashStrategy:
+    stashCR: true
+  version: v1beta1
+- group: elasticsearch.k8s.elastic.co
+  keepStatus: false
+  kind: Elasticsearch
+  stashStrategy:
+    stashCR: true
+  version: v1alpha1</code></pre>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
