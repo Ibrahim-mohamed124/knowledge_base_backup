@@ -2,7 +2,7 @@
 title: Backup, Restore, and Migration.
 description: 
 published: true
-date: 2025-11-09T08:36:03.481Z
+date: 2025-11-11T10:36:47.390Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-07T08:07:57.224Z
@@ -656,11 +656,13 @@ Optional CA bundle in Base64 format to verify TLS connections to the storage pro
 [myProfile] 
 aws_access_key_id=AWS_ACCESS_KEY_ID
 aws_secret_access_key=AWS_SECRET_ACCESS_KEY</code></pre>
+<p>&nbsp;</p>
 <ul>
-  <li>To get the Ca.crt of the <code>s3.openshift-storage.svc</code>host&nbsp;</li>
+  <li>To get the Ca.crt of the <code>s3.openshift-storage.svc</code>host</li>
 </ul>
 <pre><code class="language-plaintext"> oc get cm/openshift-service-ca.crt \
   -o jsonpath='{.data.service-ca\.crt}' | base64 -w0; echo</code></pre>
+<p>&nbsp;</p>
 <pre><code class="language-plaintext">oc create secret generic cloud-credentials \
   --from-file cloud=credentials-velero</code></pre>
 <p>&nbsp;</p>
@@ -696,6 +698,8 @@ aws_secret_access_key=AWS_SECRET_ACCESS_KEY</code></pre>
 </ul>
 <pre><code class="language-plaintext">oc label volumesnapshotclass my-snapshot-storageclass \
   velero.io/csi-volumesnapshot-class="true"</code></pre>
+<pre><code class="language-plaintext">oc label volumesnapshotclass \
+  velero.io/csi-volumesnapshot-class="true" --all</code></pre>
 <h3>Verification and Troubleshooting</h3>
 <ul>
   <li>The OADP operator creates and validates each backup storage location that is defined in the <code>DataProtectionApplication</code> object. OADP tries to connect to the object storage with the provided credentials and validates the configuration. If the configuration is correct, then the backup storage location enters the <code>Available</code> phase.</li>
