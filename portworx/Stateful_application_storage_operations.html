@@ -2,7 +2,7 @@
 title: Stateful application storage operations
 description: 
 published: true
-date: 2025-11-11T18:28:48.293Z
+date: 2025-11-11T18:48:22.181Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-11T17:16:59.056Z
@@ -230,7 +230,41 @@ spec:
   <li><strong>spec.template.spec.reclaimPolicy:</strong> what happens to objects in the object store when the <code>ApplicationBackup</code> object is deleted</li>
 </ul>
 <h1><strong>Restore an application</strong></h1>
+<blockquote>
+  <p>If you're restoring an <mark class="marker-yellow">application across namespaces on OpenShift, you must modify your destination namespace to include the same supplemental group annotation values as your source namespace:</mark></p>
+  <pre><code class="language-plaintext">annotations:  openshift.io/sa.scc.mcs: s0:c26,c25  
+              openshift.io/sa.scc.supplemental-groups: 1001990000/10000  
+              openshift.io/sa.scc.uid-range: 1001990000/10000</code></pre>
+</blockquote>
 <p>&nbsp;</p>
+<pre><code class="language-plaintext">apiVersion: stork.libopenstorage.org/v1alpha1
+kind: ApplicationRestore
+metadata:
+  name: restore
+  namespace: mysql-app
+spec:
+  backupName: backup
+  backupLocation: mysql
+  namespaceMapping:
+    &lt;backup_namespace&gt;: &lt;restore_namespace&gt;
+  replacePolicy: Delete</code></pre>
 <ul>
-  <li>&nbsp;</li>
+  <li><strong>name:</strong> the ApplicationRestore object's name</li>
+  <li><strong>namespace:</strong> the ApplicationRestore object's namespace</li>
+  <li><strong>spec.backupName:</strong> the name of the <code>applicationBackup</code> object to restore from</li>
+  <li><strong>spec.backupLocation:</strong><mark class="marker-yellow"> which backup location object to get application backups from</mark></li>
+  <li><strong>spec.namespaceMapping:</strong> <mark class="marker-yellow">a map of source and destination namespaces, </mark>allowing you to restore a backup to a different namespace</li>
+  <li><strong>spec.replacePolicy:</strong> specifies whether you want to <mark class="marker-yellow">delete or retain any matching existing resource in the target namespace</mark></li>
 </ul>
+<pre><code class="language-plaintext">storkctl get applicationbackup -n namespace
+storkctl get applicationrestore -n mysql-app</code></pre>
+<ul>
+  <li>To restore an application to a different cluster<ol>
+      <li>On the destination cluster, create BackupLocation CRD.</li>
+      <li>From the source cluster, get completed ApplicationBackup CR YAML and save it in a file with command:</li>
+    </ol>
+  </li>
+</ul>
+<pre><code class="language-plaintext">oc get ApplicationBackup &lt;Backup-Which-need-to-be-Restored&gt; -oyaml &gt; backup-completed.yaml</code></pre>
+<h1><strong>Clone an Application</strong></h1>
+<p>&nbsp;</p>
