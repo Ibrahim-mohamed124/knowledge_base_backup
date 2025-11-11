@@ -2,10 +2,87 @@
 title: Stateful application storage operations
 description: 
 published: true
-date: 2025-11-11T17:16:59.056Z
+date: 2025-11-11T17:44:29.514Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-11T17:16:59.056Z
 -->
 
 <h1><strong>Stateful application storage operations</strong></h1>
+<ul>
+  <li>portwox is able to clone applications configuration and data between namespaces in the same cluster or different clusters</li>
+</ul>
+<blockquote>
+  <p>All application storage operations require the <mark class="marker-yellow">administrator-level cluster privileges</mark> if you operate between namespaces</p>
+</blockquote>
+<ul>
+  <li>Main API resources:<ol>
+      <li>backupLocation</li>
+      <li>applicationBackup</li>
+    </ol>
+  </li>
+</ul>
+<h2>backupLocation</h2>
+<ul>
+  <li>portworx supports &nbsp;these object storage providers:<ol>
+      <li>S3 compatible storage</li>
+      <li>Azure blobs</li>
+      <li>GCC storage</li>
+    </ol>
+  </li>
+  <li>For S3 storage this data is required:</li>
+</ul>
+<pre><code class="language-plaintext">"endpoint" : "bucketEndpoint.com"
+"key": "ABCDEF1234567890"
+"secret": "ABCDEF1234567890ABCDEF1234567890ABCDEF1234567890"</code></pre>
+<p>&nbsp;</p>
+<blockquote>
+  <p>To restore backups to a different cluster, a backupLocation resource must be created on the new cluster that matches the backupLocation CRD on your original cluster.</p>
+</blockquote>
+<ul>
+  <li>There are two methods to provide the required data to connect to a S3 bucket:<ol>
+      <li>plaintext in the backupLocation resource</li>
+      <li>as a secret</li>
+    </ol>
+  </li>
+</ul>
+<h4><strong>Plaintext credentials</strong></h4>
+<pre><code class="language-plaintext">apiVersion: stork.libopenstorage.org/v1alpha1
+kind: BackupLocation
+metadata:
+  name: mysql
+  namespace: mysql-app
+  annotations:
+    stork.libopenstorage.org/skipresource: "true"
+location:
+  type: s3
+  path: "bucket-name"
+  sync: true
+  s3Config:
+    region: us-east-1
+    accessKeyID: XXXX
+    secretAccessKey: XXXX
+    endpoint: "https://bucketEndpoint.com"
+    disableSSL: false</code></pre>
+<p>&nbsp;</p>
+<ul>
+  <li><strong>name:</strong> the backupLocation object's name</li>
+  <li><strong>namespace:</strong> the<mark class="marker-yellow"> namespace the backupLocation exists in</mark></li>
+  <li><strong>location:</strong>
+    <ul>
+      <li><strong>type:</strong> the <mark class="marker-yellow">object store type</mark></li>
+      <li><strong>path:</strong> <mark class="marker-yellow">the bucket Portworx will use for the backup</mark></li>
+      <li><strong>sync:</strong> If you're<mark class="marker-yellow"> restoring to a new cluster</mark>, set <code>sync</code> to true to allow your new cluster to retrieve the previous backups from your backup location.</li>
+      <li><strong>s3Config:</strong>
+        <ul>
+          <li><strong>region:</strong> which region your s3 bucket is located in</li>
+          <li><strong>accessKeyID:</strong> your bucket's accessKeyID</li>
+          <li><strong>secretAccessKey:</strong> your bucket's secretAccessKey</li>
+          <li><strong>endpoint:</strong> the URL or IP address of your bucket</li>
+          <li><strong>disableSSL:</strong> whether or not to disable SSL</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+<p>&nbsp;</p>
