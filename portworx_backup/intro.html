@@ -2,7 +2,7 @@
 title: Air
 description: 
 published: true
-date: 2025-11-12T19:40:43.113Z
+date: 2025-11-12T19:59:58.289Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-12T19:18:53.202Z
@@ -85,6 +85,27 @@ dateCreated: 2025-11-12T19:18:53.202Z
 <ul>
   <li>NFS server<ul>
       <li>Portworx Backup's Stork component communicates directly with NFS server through PVCs.</li>
+    </ul>
+  </li>
+</ul>
+<h2><strong>Stork</strong></h2>
+<ul>
+  <li>An intelligent storage orchestrator for Kubernetes and a cloud native storage operator runtime scheduler plugin.&nbsp;</li>
+  <li>Stork can actively communicate with any type of storage driver and not just Portworx.</li>
+</ul>
+<blockquote>
+  <p>Stork facilitates stateful workflows such as snapshots, clones, cloud backups, and migrations. Stork provides:</p>
+  <ul>
+    <li>Kubernetes native mechanism for executing these workflows and makes it aware of storage and scheduler.</li>
+    <li>A storage provider-agnostic method for executing these workflows.</li>
+  </ul>
+</blockquote>
+<h3><strong>Stork capabilities</strong></h3>
+<ul>
+  <li>Stork acts as an <mark class="marker-yellow">abstraction layer between the underlying storage provider and Portworx Backup</mark>. Stork enables Portworx Backup to perform the following tasks:<ul>
+      <li>Trigger and execute backups and restores on the target cluster</li>
+      <li>Push the Kubernetes resources to the configured object storage location</li>
+      <li>Integrate with storage providers for taking snapshots and pushing snapshots to object storage</li>
     </ul>
   </li>
 </ul>
