@@ -1,0 +1,50 @@
+<!--
+title: Air
+description: 
+published: true
+date: 2025-11-12T19:18:53.202Z
+tags: 
+editor: ckeditor
+dateCreated: 2025-11-12T19:18:53.202Z
+-->
+
+<h1>Backup Concepts</h1>
+<h2><strong>Portworx Backup components</strong></h2>
+<ul>
+  <li>Portworx Backup server<ul>
+      <li>Built on the Google Remote Procedure Call <mark class="marker-yellow">(gRPC</mark>) framework and offers performance benefits by reducing latency, increasing the performance of CRUD operations</li>
+      <li>The server implements the basic <mark class="marker-yellow">CRUD operations on the Portworx Backup objects </mark>to handle the operations of data protection.&nbsp;<ul>
+          <li>Backup</li>
+          <li>Backup location</li>
+          <li>Backup schedule</li>
+          <li>Cloud credentials</li>
+          <li>Cluster</li>
+          <li>Restore</li>
+          <li>Roles</li>
+          <li>Rules</li>
+          <li>Schedule policies</li>
+        </ul>
+      </li>
+      <li>Portworx Backup Server <mark class="marker-yellow">communicates with Stork to create application-level backups</mark> by creating the <mark class="marker-yellow">backup location and application backups CRDs and Stork monitors these CRDs on each user’s cluster.</mark>&nbsp;</li>
+      <li>. Portworx Backup Server also monitors the status of application backups and application restores on these clusters.</li>
+    </ul>
+  </li>
+</ul>
+<blockquote>
+  <h3>What gRPC Does</h3>
+  <p><strong>Remote Procedure Calls</strong>: It lets a client call functions on a server as if they were local, even if the server is on another machine.</p>
+  <p><strong>Cross-language support</strong>: Works with many languages like Python, Go, Java, C++, and more.</p>
+  <p><strong>Efficient communication</strong>: Uses <strong>Protocol Buffers (Protobuf)</strong>, a compact binary format that’s faster and smaller than JSON or XML.</p>
+</blockquote>
+<ul>
+  <li>REST APIs</li>
+  <li>Portworx Central</li>
+  <li>Backup cluster</li>
+  <li>Application clusters</li>
+  <li>Stork</li>
+  <li>Datastore</li>
+  <li>Keycloak</li>
+  <li>Portworx</li>
+  <li>Cloud storage</li>
+  <li>NFS server</li>
+</ul>
