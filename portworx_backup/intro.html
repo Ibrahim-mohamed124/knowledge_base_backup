@@ -2,7 +2,7 @@
 title: Air
 description: 
 published: true
-date: 2025-11-12T19:18:53.202Z
+date: 2025-11-12T19:40:43.113Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-12T19:18:53.202Z
@@ -13,7 +13,7 @@ dateCreated: 2025-11-12T19:18:53.202Z
 <ul>
   <li>Portworx Backup server<ul>
       <li>Built on the Google Remote Procedure Call <mark class="marker-yellow">(gRPC</mark>) framework and offers performance benefits by reducing latency, increasing the performance of CRUD operations</li>
-      <li>The server implements the basic <mark class="marker-yellow">CRUD operations on the Portworx Backup objects </mark>to handle the operations of data protection.&nbsp;<ul>
+      <li>The server implements the basic <mark class="marker-yellow">CRUD operations on the Portworx Backup objects </mark>to handle the operations of data protection.<ul>
           <li>Backup</li>
           <li>Backup location</li>
           <li>Backup schedule</li>
@@ -25,7 +25,7 @@ dateCreated: 2025-11-12T19:18:53.202Z
           <li>Schedule policies</li>
         </ul>
       </li>
-      <li>Portworx Backup Server <mark class="marker-yellow">communicates with Stork to create application-level backups</mark> by creating the <mark class="marker-yellow">backup location and application backups CRDs and Stork monitors these CRDs on each user’s cluster.</mark>&nbsp;</li>
+      <li>Portworx Backup Server <mark class="marker-yellow">communicates with Stork to create application-level backups</mark> by creating the <mark class="marker-yellow">backup location and application backups CRDs and Stork monitors these CRDs on each user’s cluster.</mark></li>
       <li>. Portworx Backup Server also monitors the status of application backups and application restores on these clusters.</li>
     </ul>
   </li>
@@ -37,14 +37,54 @@ dateCreated: 2025-11-12T19:18:53.202Z
   <p><strong>Efficient communication</strong>: Uses <strong>Protocol Buffers (Protobuf)</strong>, a compact binary format that’s faster and smaller than JSON or XML.</p>
 </blockquote>
 <ul>
-  <li>REST APIs</li>
-  <li>Portworx Central</li>
-  <li>Backup cluster</li>
-  <li>Application clusters</li>
-  <li>Stork</li>
-  <li>Datastore</li>
-  <li>Keycloak</li>
-  <li>Portworx</li>
-  <li>Cloud storage</li>
-  <li>NFS server</li>
+  <li>REST APIs<ul>
+      <li>Portworx Backup offers two APIs, <mark class="marker-yellow">backup API and backend API</mark>.<ul>
+          <li>Portworx Backup backend API to create, manage and assign roles to the user.</li>
+          <li>Portworx Backup API to create, delete, schedule, and restore backups.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Portworx Central<ul>
+      <li>Facilitate a quick installation with spec generator to deploy Portworx Backup onto the clusters.&nbsp;</li>
+      <li><strong>Portworx Central on-premises</strong> is a graphical web console that allows you to monitor and manage your Portworx clusters.</li>
+    </ul>
+  </li>
+  <li>Backup cluster<ul>
+      <li>The target cluster do deploy applications</li>
+    </ul>
+  </li>
+  <li>Application clusters<ul>
+      <li>The source cluster for the applications</li>
+    </ul>
+  </li>
+  <li>Stork<ul>
+      <li>a cloud native storage operator runtime scheduler plugin.</li>
+    </ul>
+  </li>
+  <li>Datastore<ul>
+      <li>where the Portworx Backup stores objects related to the cluster such as backup location, schedule policies, backup, restore, and backup schedules</li>
+      <li>MongoDB is the datastore from the 2.0.0 version to store the metadata about the cluster objects</li>
+    </ul>
+  </li>
+  <li>Keycloak<ul>
+      <li>To validate and authorize tokens that are used for the API calls.</li>
+      <li>Keycloak component can be configured to add compatible external OIDC providers either during installation or post-installation.</li>
+    </ul>
+  </li>
+  <li>Cloud storage<ul>
+      <li>backup target to provide storage for the backups</li>
+      <li>a cloud-based S3 compliant object store backup location or cloud-based NFS backup location in Portworx Backup</li>
+      <li>Portworx Backup supports object lock for cloud-based S3 compliant object store backup locations to secure your critical data.</li>
+    </ul>
+  </li>
+</ul>
+<blockquote>
+  <p>You can add cloud-based object store or<mark class="marker-yellow"> block store backup location</mark> in Portworx Backup and backup your data on those cloud-based targets.</p>
+</blockquote>
+<ul>
+  <li>NFS server<ul>
+      <li>Portworx Backup's Stork component communicates directly with NFS server through PVCs.</li>
+    </ul>
+  </li>
 </ul>
