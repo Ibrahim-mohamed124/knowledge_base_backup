@@ -2,7 +2,7 @@
 title: Air
 description: 
 published: true
-date: 2025-11-13T10:59:05.314Z
+date: 2025-11-13T11:13:43.395Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-12T19:18:53.202Z
@@ -110,3 +110,39 @@ dateCreated: 2025-11-12T19:18:53.202Z
     </ul>
   </li>
 </ul>
+<h2><strong>Backup Workflow</strong></h2>
+<figure class="image"><img src="/backup-workflow.png"></figure>
+<p>&nbsp;</p>
+<ul>
+  <li><strong>Application Backup CR</strong>: The <mark class="marker-yellow">central entity for application backup.</mark></li>
+  <li><strong>Volume Backup Processing</strong>:<ul>
+      <li><strong>VMware, Cinder, and NFS Volumes</strong>: Backed up using <mark class="marker-yellow">CSI snapshots,</mark> <mark class="marker-yellow">CSI+KDMP</mark>, or<mark class="marker-yellow"> Non-CSI methods.</mark></li>
+      <li><strong>Cloud Volumes (AWS, GCP, Azure, IBM)</strong>: Supports cloud snapshots, CSI+KDMP, and generic backups via KDMP.</li>
+      <li><strong>PX Volumes</strong>: Backed up via <mark class="marker-yellow">CloudSnap to S3 or NFS Object Stores.</mark></li>
+    </ul>
+  </li>
+  <li><strong>Resource Backup Processing:</strong>
+    <ul>
+      <li>Uses Object Store SDK (Stork) for backing up Kubernetes resources</li>
+      <li>NFS resource export handles NFS-backed resource backups</li>
+    </ul>
+  </li>
+</ul>
+<blockquote>
+  <p><strong>KDMP (Kubernetes Data Management Platform)</strong> is the internal engine used by Portworx Backup to handle backup and restore operations for Kubernetes workloads, especially those with persistent volumes.</p>
+  <ul>
+    <li><strong>Manages file-system level backups</strong>: KDMP attaches the mount point of a PVC on the worker node and copies its contents to object storage.</li>
+    <li><strong>Supports both stateless and stateful apps</strong>: Ensures consistent backups of Kubernetes resources and data.</li>
+    <li><strong>Used for generic backups</strong>: KDMP is the default method when CSI snapshots aren’t available or applicable.</li>
+  </ul>
+</blockquote>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
