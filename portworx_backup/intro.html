@@ -2,7 +2,7 @@
 title: Air
 description: 
 published: true
-date: 2025-11-13T11:33:19.773Z
+date: 2025-11-13T11:35:40.724Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-12T19:18:53.202Z
@@ -192,10 +192,26 @@ dateCreated: 2025-11-12T19:18:53.202Z
 <p>&nbsp;</p>
 <figure class="image"><img src="/kdmp-with-ls.png"></figure>
 <p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
+<ul>
+  <li>To trigger a CSI local snapshot with KDMP, in the <strong>Create backup</strong> window:<ol>
+      <li>Disable <strong>Cross Cloud Ba</strong>
+        <ol>
+          <li><strong>ckup/Restore</strong> toggle button</li>
+          <li>Map your provisioner with volume snapshot class (vsc) wherever applicable</li>
+          <li>Enable <strong>Offload to backup location</strong></li>
+        </ol>
+      </li>
+    </ol>
+  </li>
+</ul>
+<h4><strong>Direct KDMP/Generic</strong></h4>
+<ul>
+  <li>Portworx Backup triggers a direct KDMP backup in the following scenarios:<ul>
+      <li>When you enable the <strong>Cross Cloud Backup/Restore</strong> option in the <strong>Create Backup</strong> window of the web console during back creation operation.</li>
+    </ul>
+  </li>
+</ul>
+<figure class="image"><img src="/direct-kdmp.png"></figure>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
