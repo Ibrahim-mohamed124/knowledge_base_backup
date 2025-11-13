@@ -2,7 +2,7 @@
 title: Air
 description: 
 published: true
-date: 2025-11-13T11:28:37.948Z
+date: 2025-11-13T11:33:19.773Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-12T19:18:53.202Z
@@ -183,11 +183,14 @@ dateCreated: 2025-11-12T19:18:53.202Z
   <p><strong>1 copy offsite</strong>: Stored in a different physical location (e.g., cloud, remote data center).</p>
 </blockquote>
 <h4><strong>CSI local snapshot with KDMP</strong></h4>
-<ul>
-  <li>&nbsp;</li>
-</ul>
+<ol>
+  <li>Takes available snapshot storageclass information</li>
+  <li>Creates a local snapshot using CSI driver</li>
+  <li>Uses KDMP driver to attach the mount point of the PV on the worker node</li>
+  <li>Copies the file system contents to object store (S3 or others) or NFS backup location</li>
+</ol>
 <p>&nbsp;</p>
-<p>&nbsp;</p>
+<figure class="image"><img src="/kdmp-with-ls.png"></figure>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
