@@ -2,7 +2,7 @@
 title: Air
 description: 
 published: true
-date: 2025-11-13T11:13:43.395Z
+date: 2025-11-13T11:20:34.197Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-12T19:18:53.202Z
@@ -136,6 +136,34 @@ dateCreated: 2025-11-12T19:18:53.202Z
     <li><strong>Used for generic backups</strong>: KDMP is the default method when CSI snapshots aren’t available or applicable.</li>
   </ul>
 </blockquote>
+<h2><strong>Portworx cloud snapshots</strong></h2>
+<ul>
+  <li>Portworx <mark class="marker-yellow">compares block metadata, called extents,</mark> to determine the<mark class="marker-yellow"> difference between the local snapshot and the previously uploaded cloud snapshot, so portworx does not need to store previous snapshots for comparison.</mark></li>
+  <li>Portworx must also upload this metadata to the cloud alongside the cloud snap data, resulting in slightly larger uploads.</li>
+  <li>Workflow:<ol>
+      <li>Takes a snapshot</li>
+      <li>Downloads extent data for the previous snapshot from the cloud</li>
+      <li><mark class="marker-yellow">Compares extents</mark>, scans for changed blocks or generations</li>
+      <li>Uploads the changes and new snapshot metadata</li>
+      <li>Deletes the local snapshot</li>
+    </ol>
+  </li>
+</ul>
+<figure class="image"><img src="/portworx-driver.png"></figure>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
