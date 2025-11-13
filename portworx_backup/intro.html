@@ -2,7 +2,7 @@
 title: Air
 description: 
 published: true
-date: 2025-11-13T11:20:34.197Z
+date: 2025-11-13T11:27:47.515Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-12T19:18:53.202Z
@@ -151,12 +151,37 @@ dateCreated: 2025-11-12T19:18:53.202Z
 </ul>
 <figure class="image"><img src="/portworx-driver.png"></figure>
 <p>&nbsp;</p>
+<h3><strong>Native CSI snapshot (On-premises)</strong></h3>
+<ul>
+  <li>Portworx Backup utilizes the storage provider's CSI driver to create a local snapshot on the array.&nbsp;</li>
+  <li>To trigger a native CSI snapshot backup, in the <strong>Create Backup</strong> window:<ul>
+      <li>Disable <strong>Cross Cloud Backup/Restore</strong> toggle button</li>
+      <li>Map your provisioner with volume snapshot class (VSC) if applicable</li>
+      <li>Disable <strong>Offload to backup location</strong></li>
+    </ul>
+  </li>
+</ul>
+<figure class="image"><img src="/native-csi.png"></figure>
 <p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
+<h3><strong>KDMP backup</strong></h3>
+<ul>
+  <li><strong>Ouncers only when the storage provider is other than portworx enterprise&nbsp;</strong>
+    <ul>
+      <li>If the storage provider<mark class="marker-yellow"> does not support</mark> CSI snapshots<ul>
+          <li>When storage provider does not support snapshot mechanism with CSI driver. For some on-premises (for example, Flash Array) or on cloud storage providers without CSI snapshot support, direct KDMP backup gets triggered and you need to choose <strong>Cross Cloud Backup/Restore</strong> option in the <strong>Create Backup</strong> window during backup creation operation.</li>
+        </ul>
+      </li>
+      <li>If the storage provider <mark class="marker-yellow">supports CSI snapshots</mark> and if you want to <mark class="marker-yellow">offload the backup to a backup location (S3 or NFS) along with the selection of volume snapshot class during creation of backup.</mark></li>
+    </ul>
+  </li>
+  <li><strong>Cross-cloud and cross-region backups and restores with Portworx Backup.</strong></li>
+  <li><strong>3-2-1 backups</strong></li>
+</ul>
+<blockquote>
+  <p><strong>3 copies of your data</strong>: One primary and two backups.</p>
+  <p><strong>2 different storage media</strong>: For example, internal disk + external drive or cloud + tape.</p>
+  <p><strong>1 copy offsite</strong>: Stored in a different physical location (e.g., cloud, remote data center).</p>
+</blockquote>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
