@@ -2,7 +2,7 @@
 title: Chapter 3.  Cluster Partitioning
 description: 
 published: true
-date: 2025-11-11T10:15:17.162Z
+date: 2025-11-16T12:22:02.594Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-09T10:57:53.457Z
@@ -127,6 +127,29 @@ spec:
     </tbody>
   </table>
 </figure>
+<p>&nbsp;</p>
+<pre><code class="language-plaintext">oc get machineconfig \
+  --selector machineconfiguration.openshift.io/role=worker</code></pre>
+<p>&nbsp;</p>
+<ul>
+  <li>The MCO reads MCs alphanumerically by the name, from <code>00-*</code> to <code>99-*</code>.</li>
+  <li>OpenShift stores the resulting compilation of MCs in a rendered MC resource. Thus, if two or more MCs apply changes to the same file, then the <mark class="marker-yellow">MCO applies only the changes from the MC with a higher number.&nbsp;</mark></li>
+  <li>For two MCs with the same number, the MCO uses the last one alphabetically. For example, the <code>99-worker-ssh-new</code> MC has precedence over the <code>99-worker-ssh-last</code> MC.</li>
+</ul>
+<h3>Machine Configuration Pools</h3>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
