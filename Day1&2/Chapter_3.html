@@ -2,7 +2,7 @@
 title: Chapter 3.  Cluster Partitioning
 description: 
 published: true
-date: 2025-11-16T13:09:35.191Z
+date: 2025-11-16T13:17:38.991Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-09T10:57:53.457Z
@@ -315,4 +315,12 @@ Annotations: machineconfiguration.openshift.io/currentConfig: rendered-worker-37
   -n openshift-cluster-node-tuning-operator</code></pre>
 <p>&nbsp;</p>
 <pre><code class="language-plaintext">oc get profile -n openshift-cluster-node-tuning-operator</code></pre>
-<p>&nbsp;</p>
+<h3>The Node Feature Discovery Operator</h3>
+<ul>
+  <li>The NFD operator detects hardware details, such as processor architecture, specialized PCI hardware such as GPUs or networking cards, and other system configurations on your cluster nodes. The NFD operator runs inside the <code>openshift-nfd</code> namespace for these operations.</li>
+</ul>
+<h3>The Kernel Module Management Operator</h3>
+<ul>
+  <li>Manages, builds, signs, and deploys out-of-tree kernel modules and device plug-ins on OpenShift Container Platform clusters.&nbsp;</li>
+  <li>A <code>Module</code> CRD specifies the kernel that can be added to one or more cluster nodes.</li>
+</ul>
