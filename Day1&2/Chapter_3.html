@@ -2,7 +2,7 @@
 title: Chapter 3.  Cluster Partitioning
 description: 
 published: true
-date: 2025-11-16T12:22:02.594Z
+date: 2025-11-16T12:35:52.369Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-09T10:57:53.457Z
@@ -137,21 +137,75 @@ spec:
   <li>For two MCs with the same number, the MCO uses the last one alphabetically. For example, the <code>99-worker-ssh-new</code> MC has precedence over the <code>99-worker-ssh-last</code> MC.</li>
 </ul>
 <h3>Machine Configuration Pools</h3>
+<ul>
+  <li>MCPs specify a <code>machineConfigSelector</code> MC label to select one or more MCs, and a <code>nodeSelector</code> node label to select one or more nodes.</li>
+  <li>Assigning the <code>worker</code> role to the custom MCP is critical so that OpenShift applies operating system updates that are labeled as <code>worker</code> to the machines in the pool. So, <code>machineConfigSelector</code> match expression selects both the <code>worker</code> role and the custom label.</li>
+</ul>
+<figure class="image image_resized" style="width:100%;"><img src="/mc-reuse.svg"></figure>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
+<blockquote>
+  <p>Nodes with the <code>worker</code> role can be part of only one custom pool, and nodes with the <code>master</code> role cannot be part of a custom pool. In these cases, the MCO does not apply any changes that are specific to the custom pools, and shows an error in the MCC pod logs.</p>
+</blockquote>
 <p>&nbsp;</p>
+<pre><code class="language-plaintext">apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfigPool
+metadata:
+    name: custom 1
+spec:
+    machineConfigSelector:
+        matchExpressions:
+            - key: machineconfiguration.openshift.io/role
+              operator: In
+              values: [worker, custom] 2
+    nodeSelector:
+        matchLabels:
+            node-role.kubernetes.io/custom: "" 3</code></pre>
+<figure class="table">
+  <table style="background-color:rgb(255, 255, 255);">
+    <tbody>
+      <tr>
+        <td style="padding:0px;vertical-align:top;">
+          <figure class="image image_resized" style="width:22px;"><img src="https://rol.redhat.com/rol/static/roc/Common_Content/images/1.svg" alt="1"></figure>
+        </td>
+        <td style="padding:0px;vertical-align:top;">The name for the custom MCP.</td>
+      </tr>
+      <tr>
+        <td style="padding:0px;vertical-align:top;">
+          <figure class="image image_resized" style="width:22px;"><img src="https://rol.redhat.com/rol/static/roc/Common_Content/images/2.svg" alt="2"></figure>
+        </td>
+        <td style="padding:0px;vertical-align:top;">The MC selector includes both the <code>worker</code> and <code>custom</code> MCs.</td>
+      </tr>
+      <tr>
+        <td style="padding:0px;vertical-align:top;">
+          <figure class="image image_resized" style="width:22px;"><img src="https://rol.redhat.com/rol/static/roc/Common_Content/images/3.svg" alt="3"></figure>
+        </td>
+        <td style="padding:0px;vertical-align:top;">The node selector includes the nodes in the cluster with the <code>custom</code> role.</td>
+      </tr>
+    </tbody>
+  </table>
+</figure>
 <p>&nbsp;</p>
+<pre><code class="language-plaintext">oc get machineconfigpool</code></pre>
 <p>&nbsp;</p>
+<p><code><strong>CONFIG:</strong></code>The name for the <mark class="marker-yellow">rendered MC that is applied to the nodes in the MCP</mark>. During the first update, this field remains blank.</p>
+<p><code><strong>UPDATED:</strong></code>The <code>True</code> status indicates that the<mark class="marker-yellow"> MCO applied the current MC to the nodes in that MCP.</mark> The <code>False</code> status indicates that nodes in the MCP are updating.</p>
+<p><code><strong>UPDATING:</strong></code>The <code>True</code> status indicates that the <mark class="marker-yellow">MCO is applying the intended MC</mark>. Nodes in the <code>UPDATING</code> state might not be available for scheduling. The <code>False</code> status indicates that all nodes in the MCP are updated.</p>
+<p><code><strong>DEGRADED:</strong></code>A <code>True</code> status indicates that the MCO is<mark class="marker-yellow"> blocked from applying the current or intended MC to at least one node in that MCP</mark>. A possible reason is a detection of configuration drift. Configuration drift is explained later in this section. Nodes that are degraded might not be available for scheduling. A <code>False</code> status indicates that all nodes in the MCP are ready.</p>
+<p><code><strong>MACHINECOUNT:</strong></code>Indicates the total number of machines in the MCP.</p>
+<p><code><strong>READYMACHINECOUNT:</strong></code>Indicates the total number of machines in the MCP that are ready for scheduling.</p>
+<p><code><strong>UPDATEDMACHINECOUNT:</strong></code>Indicates the total number of machines in the MCP with the current MC.</p>
+<p><code><strong>DEGRADEDMACHINECOUNT: </strong></code>Indicates the total number of machines in that MCP that are degraded or irreconcilable.</p>
 <p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
+<h3>Infrastructure Nodes</h3>
+<ul>
+  <li>Infra role for nodes that host only infrastructure components, such as cluster logging, cluster monitoring, router, OAuth services or the integrated container image registry.&nbsp;</li>
+  <li>Infrastructure nodes do not count towards the total number of required OpenShift subscriptions to run the environment.</li>
+</ul>
+<h3>Machine Configuration Operator Updates</h3>
+<ul>
+  <li>&nbsp;</li>
+</ul>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
