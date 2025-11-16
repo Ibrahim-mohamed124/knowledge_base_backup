@@ -2,7 +2,7 @@
 title: Chapter 3.  Cluster Partitioning
 description: 
 published: true
-date: 2025-11-16T13:00:03.253Z
+date: 2025-11-16T13:09:35.191Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-09T10:57:53.457Z
@@ -300,11 +300,19 @@ Annotations: machineconfiguration.openshift.io/currentConfig: rendered-worker-37
 <blockquote>
   <p>You can also use the <code>ContainerRuntimeConfig</code> CR to change the limit of PIDs or the maximum logging size. However, Red&nbsp;Hat recommends using the <code>KubeletConfig</code> CR to change these parameters, because they will likely be deprecated in a future version.</p>
 </blockquote>
+<h2>Node Configuration with Special Purpose Operators</h2>
+<ul>
+  <li>focus on specialized hardware tuning, cluster organization, and advanced optimizations.</li>
+  <li>Red&nbsp;Hat recommends running each special purpose operator within its own namespace and using a service account with the appropriate permissions.</li>
+</ul>
+<h3>The Node Tuning Operator</h3>
+<ul>
+  <li>The Node Tuning Operator is<mark class="marker-yellow"> a cluster operator </mark>that manages node-level optimizations by using the <mark class="marker-yellow">TuneD service</mark> and the <code>tuned</code> daemon.</li>
+  <li>The operator manages the containerized tuned daemon for RHOCP as a Kubernetes daemon set.&nbsp;</li>
+  <li>The Node Tuning Operator is installed by default in RHOCP clusters, and runs in the <code>openshift-cluster-node-tuning-operator</code> namespace.</li>
+</ul>
+<pre><code class="language-plaintext">oc get Tuned/default -o yaml \
+  -n openshift-cluster-node-tuning-operator</code></pre>
 <p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
+<pre><code class="language-plaintext">oc get profile -n openshift-cluster-node-tuning-operator</code></pre>
 <p>&nbsp;</p>
