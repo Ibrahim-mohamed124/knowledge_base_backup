@@ -2,7 +2,7 @@
 title: Chapter 3.  Cluster Partitioning
 description: 
 published: true
-date: 2025-11-16T12:43:58.254Z
+date: 2025-11-16T13:00:03.253Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-09T10:57:53.457Z
@@ -263,4 +263,48 @@ Annotations: machineconfiguration.openshift.io/currentConfig: rendered-worker-37
 <blockquote>
   <p>A degraded node is online and operational, you cannot update it.</p>
 </blockquote>
+<h3>Remediation actions</h3>
+<ol>
+  <li>Generate:&nbsp;<ul>
+      <li>Generate a force file on the degraded node to<mark class="marker-yellow"> bypass the configuration drift detection and reapply the current MC.&nbsp;</mark>
+        <ul>
+          <li>Create<mark class="marker-yellow"> a debug pod on the node with the degraded state</mark> and create the <code>/run/machine-config-daemon-force</code> file.</li>
+          <li>OpenShift skips the MC validation, restarts the node, and applies the current MC to the node.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ol>
+<blockquote>
+  <p>The force file does not force the node upgrade; it instead skips validation of configurations on the system and attempts an update regardless of the difference.&nbsp;</p>
+</blockquote>
+<p>2. Rewrite:</p>
+<p>&nbsp; &nbsp; » Rewrite the file contents or change the file permissions of the files on the node to match the MC configuration.&nbsp;</p>
+<p>&nbsp; &nbsp; » This remediation does not require rebooting the node in a degraded state, and thus avoids possible downtime in your applications.</p>
+<pre><code class="language-plaintext"> oc describe mcp worker</code></pre>
+<p>&nbsp;</p>
+<pre><code class="language-plaintext">oc get pod -n openshift-machine-config-operator \
+  --field-selector spec.nodeName=worker01</code></pre>
+<p>&nbsp;</p>
+<pre><code class="language-plaintext">oc logs machine-config-daemon-jsrzm \
+  -n openshift-machine-config-operator</code></pre>
+<p>&nbsp;</p>
+<h3>Configure MCO-related Custom Resources</h3>
+<ul>
+  <li>The MCO provides the <code>ContainerRuntimeConfig</code> CR to modify CRI-O container runtime settings, and the <code>KubeletConfig</code> CR to manage the Kubelet service.&nbsp;</li>
+  <li>OpenShift provides a <code>kubelet</code> configuration controller to the MCC. You can use the <code>KubeletConfig</code> CR to edit the <code>kubelet</code> parameters.</li>
+  <li>The MCO can write the <code>kubelet.conf</code> configuration file and the <code>kubelet.system</code> <code>systemd</code> unit file to Ignition, so Ignition writes these two files to configure the <code>kubelet</code> agent when it starts on a node.</li>
+  <li>MCD reboots the nodes to write the new configuration.</li>
+  <li>The MCO can write the <code>crio.conf</code> and <code>storage.conf</code> configuration files on the associated nodes with the updated values.</li>
+</ul>
+<blockquote>
+  <p>You can also use the <code>ContainerRuntimeConfig</code> CR to change the limit of PIDs or the maximum logging size. However, Red&nbsp;Hat recommends using the <code>KubeletConfig</code> CR to change these parameters, because they will likely be deprecated in a future version.</p>
+</blockquote>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
 <p>&nbsp;</p>
