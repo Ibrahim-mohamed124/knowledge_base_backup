@@ -2,7 +2,7 @@
 title: Chapter 3.  Cluster Partitioning
 description: 
 published: true
-date: 2025-11-16T12:35:52.369Z
+date: 2025-11-16T12:43:58.254Z
 tags: 
 editor: ckeditor
 dateCreated: 2025-11-09T10:57:53.457Z
@@ -51,7 +51,7 @@ dateCreated: 2025-11-09T10:57:53.457Z
           <li>The machine configuration server (MCS)<mark class="marker-yellow"> provides instance customizations to machines that join the cluster.</mark> The MCS uses Ignition to provide the instance customizations to cluster nodes that join the cluster. <mark class="marker-yellow">The RHCOS operating system downloads and processes Ignition files at boot time.</mark></li>
         </ul>
       </li>
-      <li>MCO also requires the<mark class="marker-yellow"> machine-config-daemon daemonset</mark> that RHCOS provides.</li>
+      <li>MCO also requires the<mark class="marker-yellow"> machine-config-daemon daemonset (MCD)</mark> that RHCOS provides.</li>
     </ul>
   </li>
   <li>The MCO can manage the following resources:<ul>
@@ -204,10 +204,63 @@ spec:
 </ul>
 <h3>Machine Configuration Operator Updates</h3>
 <ul>
-  <li>&nbsp;</li>
+  <li>The MCD reports the state of the node updates by using node annotations.&nbsp;</li>
 </ul>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
+<pre><code class="language-plaintext">oc describe node worker01
+Name:        worker01
+Roles:       worker
+Labels:      beta.kubernetes.io/arch=amd64
+             ...output omitted...
+             node-role.kubernetes.io/worker=
+             node.openshift.io/os_id=rhcos
+Annotations: machineconfiguration.openshift.io/currentConfig: rendered-worker-370...bfd 1
+             machineconfiguration.openshift.io/desiredConfig: rendered-worker-370...bfd 2
+             machineconfiguration.openshift.io/reason:
+             machineconfiguration.openshift.io/state: Done 3
+             volumes.kubernetes.io/controller-managed-attach-detach: true
+...output omitted...</code></pre>
+<figure class="table">
+  <table style="background-color:rgb(255, 255, 255);">
+    <tbody>
+      <tr>
+        <td style="padding:0px;vertical-align:top;">
+          <figure class="image image_resized" style="width:22px;"><img src="https://rol.redhat.com/rol/static/roc/Common_Content/images/1.svg" alt="1"></figure>
+        </td>
+        <td style="padding:0px;vertical-align:top;">The current rendered MC that is applied to the node.</td>
+      </tr>
+      <tr>
+        <td style="padding:0px;vertical-align:top;">
+          <figure class="image image_resized" style="width:22px;"><img src="https://rol.redhat.com/rol/static/roc/Common_Content/images/2.svg" alt="2"></figure>
+        </td>
+        <td style="padding:0px;vertical-align:top;">The intended rendered MC to be applied to the node.</td>
+      </tr>
+      <tr>
+        <td style="padding:0px;vertical-align:top;">
+          <figure class="image image_resized" style="width:22px;"><img src="https://rol.redhat.com/rol/static/roc/Common_Content/images/3.svg" alt="3"></figure>
+        </td>
+        <td style="padding:0px;vertical-align:top;">The current node state regarding MCO.</td>
+      </tr>
+    </tbody>
+  </table>
+</figure>
+<ul>
+  <li>When the<mark class="marker-yellow"> intended configuration does not match the current configuration</mark>, the MCD applies the intended rendered MC, drains all the pods from the node, and reboots the node.</li>
+</ul>
+<blockquote>
+  <h4>Configuration Drift</h4>
+  <p>A <i>configuration drift</i> is the state where the configuration on a node does not fully match what the currently applied rendered MC specifies.</p>
+  <p>The MCD checks for configuration drifts when <mark class="marker-yellow">a node boots</mark>, or when<mark class="marker-yellow"> any of the specified files in the MC are modified outside the MC, or before a new MC is applied.</mark></p>
+</blockquote>
+<ul>
+  <li>When the MCD detects a configuration drift, the MCD performs the following tasks:<ol>
+      <li>Logs an<mark class="marker-yellow"> error message </mark>to the console.</li>
+      <li>Generates a<mark class="marker-yellow"> Kubernetes event.</mark></li>
+      <li><mark class="marker-yellow">Stops additional drift detection</mark> on the affected node.</li>
+      <li>Marks both the node and the MCP with the<mark class="marker-yellow"> degraded state.</mark></li>
+    </ol>
+  </li>
+</ul>
+<blockquote>
+  <p>A degraded node is online and operational, you cannot update it.</p>
+</blockquote>
 <p>&nbsp;</p>
