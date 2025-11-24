@@ -1,1 +1,79 @@
 
+<!--
+title: Replicatoin
+description: 
+published: true
+date: 2025-10-25T10:39:42.498Z
+tags: vault
+editor: ckeditor
+dateCreated: 2025-10-13T10:37:55.835Z
+-->
+
+<h1>High Availability&nbsp;</h1>
+<ul>
+  <li>Vault Enterprise that works in leader-follower model</li>
+  <li>Leader is responsible for writing secrets to its backend storage and then replicate them asynchronously to the followers</li>
+  <li>the followers redirect write requests to the leader</li>
+  <li>&nbsp;Types of Replication<ul>
+      <li>Performance replication<ul>
+          <li>expand the cluster to multiple regions&nbsp;</li>
+          <li>handles reads only and foreword writes to leader</li>
+          <li>Clients authenticate to the performance cluster separately</li>
+          <li>Does not replicate tokens or leases, so applications need &nbsp;to reauthenticate to the performance cluster to obtain a valid token</li>
+          <li>Can have DR replication cluster</li>
+        </ul>
+      </li>
+      <li>Disaster Recovery replication<ul>
+          <li>Does not service any requests, warm standby</li>
+          <li>replicate tokens and leases</li>
+          <li>clients authenticate with the primary cluster, and when the secondary is up they can use it</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+<figure class="image"><img src="/captu65re.png"></figure>
+<p>&nbsp;</p>
+<ul>
+  <li>Replication ports tcp &nbsp;8200/8201, resolvable DNS names</li>
+  <li>Replication is not enabled by default, and must be explicitly enabled</li>
+  <li>Vault creates internal root CA on the primary cluster and creates the client certs as well to be used in TLS connection between nodes</li>
+  <li>must pass the TLS through the load balancer if exist</li>
+  <li>Secondary Token: single use token to permit the secondary cluster to replicate data from the primary cluster<ul>
+      <li>protected with response wrapping</li>
+      <li>includes information such as:<ul>
+          <li>client and CA certs</li>
+          <li>address of the primary cluster</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+<figure class="image"><img src="/testcapture.png"></figure>
+<ol>
+  <li>on the primary&nbsp;</li>
+</ol>
+<pre><code class="language-plaintext">$ vault write -f sys/replication/dr[performance]/primary/enable</code></pre>
+<p>&nbsp;</p>
+<pre><code class="language-plaintext">$ vault write sys/replication/dr[performance]/primary/seondary-token id=&lt;name&gt;</code></pre>
+<p>&nbsp;</p>
+<p>&nbsp;2. on the secondary</p>
+<pre><code class="language-plaintext">$ vault write sys/replication/dr[performance]/secondary/enalbe token=&lt;token&gt;</code></pre>
+<p>&nbsp;</p>
+<pre><code class="language-plaintext">$ vault read -format=json sys/replication/performance[dr]/status</code></pre>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
